@@ -5,8 +5,9 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
     // SCREEN SETTINGS
     public final int originalTileSize = 16; // 16x16 tile
@@ -21,13 +22,18 @@ public class GamePanel extends JPanel implements Runnable{
     // FPS
     final int FPS = 60;
 
+    // SYSTEM
+    public UI ui = new UI(this);
+    public Sound sound = new Sound();
     TileManager tileManager = new TileManager(this);
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
+
+    // ENTITY
     public Player player = new Player(this, keyHandler);
 
-    public GamePanel() {
+    public GamePanel() throws IOException {
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -89,6 +95,7 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D g2 = (Graphics2D) g;
         tileManager.draw(g2);
         player.draw(g2);
+        ui.draw(g2);
         g2.dispose();
     }
 

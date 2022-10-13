@@ -5,46 +5,38 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean leftPressed, leftReleased, rightPressed, rightReleased;
+    public boolean jumpPressed, jumpReleased;
+    public boolean firePressed;
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
 
-        int code = e.getKeyCode();
-        if (code == KeyEvent.VK_W) {
-            upPressed = true;
-        }
-        if (code == KeyEvent.VK_A) {
-            leftPressed = true;
-        }
-        if (code == KeyEvent.VK_S) {
-            downPressed = true;
-        }
-        if (code == KeyEvent.VK_D) {
-            rightPressed = true;
-        }
+        keyAction(e, true);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
+        keyAction(e, false);
+    }
+
+    private void keyAction(KeyEvent e, boolean pressed) {
+
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_W) {
-            upPressed = false;
-        }
-        if (code == KeyEvent.VK_A) {
-            leftPressed = false;
-        }
-        if (code == KeyEvent.VK_S) {
-            downPressed = false;
-        }
-        if (code == KeyEvent.VK_D) {
-            rightPressed = false;
-        }
+        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
+            leftPressed = pressed;
+            leftReleased = !pressed;
+        } else if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
+            rightPressed = pressed;
+            rightReleased = !pressed;
+        } else if (code == KeyEvent.VK_SPACE) {
+            jumpPressed = pressed;
+            jumpReleased = !pressed;
+        } else if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_X)
+            firePressed = pressed;
     }
 }
