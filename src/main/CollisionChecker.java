@@ -16,7 +16,7 @@ public class CollisionChecker {
         int entityLeftX = entity.x + entity.solidArea.x;
         int entityRightX = entity.x + entity.solidArea.x + entity.solidArea.width;
         int entityTopY = entity.y + entity.solidArea.y;
-        int entityBottomY = entity.y + entity.solidArea.y + entity.solidArea.height;
+        int entityBottomY = entity.y + entity.solidArea.y + entity.solidArea.height - 1; // 这里 -1 非常非常关键
 
         int entityLeftCol = entityLeftX / gp.tileSize;
         int entityRightCol = entityRightX / gp.tileSize;
@@ -50,6 +50,7 @@ public class CollisionChecker {
         if (gp.tileManager.tile[tileNum1].collision || gp.tileManager.tile[tileNum2].collision) {
             entity.vSpeed = 0; // 往下落，碰撞
             entity.landed = true; // 踩在地面上
+            entity.y = (entityBottomRow - 1) * gp.tileSize; // 调整位置，贴住地面
         } else {
             entity.landed = false; // 浮空
         }

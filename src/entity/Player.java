@@ -3,6 +3,7 @@ package entity;
 import main.Constant;
 import main.GamePanel;
 import main.KeyHandler;
+import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,7 +20,7 @@ public class Player extends Entity {
     int maxJumpFrame = 10;
     public int retryNum = 0;
 
-    public Player(GamePanel gp, KeyHandler keyH) throws IOException {
+    public Player(GamePanel gp, KeyHandler keyH) {
 
         this.gp = gp;
         this.keyHandler = keyH;
@@ -33,12 +34,22 @@ public class Player extends Entity {
         y = 100;
         hSpeed = 4;
         vSpeed = 0;
-        solidArea = new Rectangle(8, 8, 16, 16);
+        solidArea = new Rectangle(8, 8, 32, 40);
     }
 
-    public void getPlayerImage() throws IOException {
+    public void getPlayerImage() {
 
-        img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/1.png")));
+        img = setup("1");
+    }
+
+    public BufferedImage setup(String imageName) {
+
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/" + imageName + ".png")));
+            image = UtilityTool.scaleImage(image, gp.tileSize, gp.tileSize);
+        } catch (Exception e) {}
+        return image;
     }
 
     public void update() {
@@ -50,8 +61,8 @@ public class Player extends Entity {
         if (keyHandler.jumpPressed && jumpSize < 2 && ++jumpPressedFrame <= maxJumpFrame) {
             vSpeed = -10;
             gp.sound.setFile(gp.sound.jump);
-            gp.sound.play();
-
+            if (jumpPressedFrame == 1) // 只在起跳第一帧播放音效
+                gp.sound.play();
         }
         if (keyHandler.jumpReleased) {
             jumpPressedFrame = 0;
@@ -80,7 +91,7 @@ public class Player extends Entity {
     public void draw(Graphics2D g2) {
 
         BufferedImage image = img;
-        g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(image, x, y,null);
     }
 
 }
