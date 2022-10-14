@@ -1,4 +1,4 @@
-package main;
+package main.tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

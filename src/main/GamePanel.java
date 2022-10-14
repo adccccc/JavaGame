@@ -1,7 +1,7 @@
 package main;
 
-import entity.Player;
-import tile.TileManager;
+import main.entity.Player;
+import main.tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,13 +11,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     // SCREEN SETTINGS
     public final int originalTileSize = 16; // 16x16 tile
-    public final int scale = 3;
+    public final int scale = 2;
 
-    public final int tileSize = originalTileSize * scale; // 48 * 48;
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
+    public final int tileSize = originalTileSize * scale; // 32 * 32;
+    public final int maxScreenCol = 24;
+    public final int maxScreenRow = 20;
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public final int screenHeight = tileSize * maxScreenRow; // 640 pixels
 
     // FPS
     final int FPS = 60;
@@ -25,10 +25,9 @@ public class GamePanel extends JPanel implements Runnable {
     // SYSTEM
     public UI ui = new UI(this);
     public Sound sound = new Sound();
-    TileManager tileManager = new TileManager(this);
+    public TileManager tileManager = new TileManager(this);
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
-    public CollisionChecker collisionChecker = new CollisionChecker(this);
 
     // ENTITY
     public Player player = new Player(this, keyHandler);

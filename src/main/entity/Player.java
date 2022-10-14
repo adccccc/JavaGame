@@ -1,14 +1,14 @@
-package entity;
+package main.entity;
 
+import main.CollisionChecker;
 import main.Constant;
 import main.GamePanel;
 import main.KeyHandler;
-import main.UtilityTool;
+import main.tool.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Objects;
 
 public class Player extends Entity {
@@ -18,6 +18,10 @@ public class Player extends Entity {
     int jumpSize = 0;
     int jumpPressedFrame = 0;
     int maxJumpFrame = 10;
+    public Rectangle solidRect; // 角色的实际碰撞区域
+    public String direction; // 角色朝向
+    public boolean landed = false; // 踩在地面上
+    public boolean collisionOn = false; // 是否产生碰撞
     public int retryNum = 0;
 
     public Player(GamePanel gp, KeyHandler keyH) {
@@ -34,7 +38,7 @@ public class Player extends Entity {
         y = 100;
         hSpeed = 4;
         vSpeed = 0;
-        solidArea = new Rectangle(8, 8, 32, 40);
+        solidRect = new Rectangle(6, 6, 20, 25);
     }
 
     public void getPlayerImage() {
@@ -73,7 +77,7 @@ public class Player extends Entity {
         }
 
         collisionOn = false;
-        gp.collisionChecker.checkTile(this);
+        CollisionChecker.checkTile(this, this.gp.tileManager);
         if (!collisionOn) {
             if (keyHandler.leftPressed) {
                 x -= hSpeed;

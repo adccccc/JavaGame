@@ -1,7 +1,7 @@
-package tile;
+package main.tile;
 
 import main.GamePanel;
-import main.UtilityTool;
+import main.tool.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class TileManager {
         tile = new Tile[10];
         mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
         getTileImage();
-        loadMap("/maps/map01.txt");
+        loadMap("/maps/map01.csv");
     }
 
     public void getTileImage() {
@@ -54,7 +54,7 @@ public class TileManager {
             while (col < gp.maxScreenCol && row < gp.maxScreenRow) {
                 String line = br.readLine();
                 while (col < gp.maxScreenCol) {
-                    String[] arr = line.split(" ");
+                    String[] arr = line.split(",");
                     int num = Integer.parseInt(arr[col]);
                     mapTileNum[col][row] = num;
                     col++;
