@@ -24,13 +24,13 @@ public class CollisionChecker {
         int entityBottomRow = entityBottomY / gp.tileSize;
 
         int tileNum1, tileNum2;
-        if ("left".equals(entity.direction)) {
+        if (Constant.Direction.LEFT.equals(entity.direction)) {
             int nextLeftCol = (entityLeftX - entity.hSpeed) / gp.tileSize;
             tileNum1 = gp.tileManager.mapTileNum[nextLeftCol][entityTopRow];
             tileNum2 = gp.tileManager.mapTileNum[nextLeftCol][entityBottomRow];
             if (gp.tileManager.tile[tileNum1].collision || gp.tileManager.tile[tileNum2].collision)
                 entity.collisionOn = true;
-        } else if ("right".equals(entity.direction)) {
+        } else if (Constant.Direction.RIGHT.equals(entity.direction)) {
             int nextRightCol = (entityRightX + entity.hSpeed) / gp.tileSize;
             tileNum1 = gp.tileManager.mapTileNum[nextRightCol][entityTopRow];
             tileNum2 = gp.tileManager.mapTileNum[nextRightCol][entityBottomRow];
@@ -51,6 +51,12 @@ public class CollisionChecker {
             entity.vSpeed = 0; // 往下落，碰撞
             entity.landed = true; // 踩在地面上
             entity.y = (entityBottomRow - 1) * gp.tileSize; // 调整位置，贴住地面
+        } else if (gp.tileManager.tile[tileNum1].platform || gp.tileManager.tile[tileNum2].platform) {
+            if ((entity.vSpeed > 0 || entity.landed) && entityBottomY < entityBottomRow * gp.tileSize) { // 仅在下落的时候碰撞
+                entity.vSpeed = 0;
+                entity.landed = true;
+                entity.y = (entityBottomRow - 1) * gp.tileSize; // 调整位置，贴住地面
+            }
         } else {
             entity.landed = false; // 浮空
         }

@@ -60,9 +60,11 @@ public class Player extends Entity {
             direction = "right";
         if (keyHandler.jumpPressed && jumpSize < 2 && ++jumpPressedFrame <= maxJumpFrame) {
             vSpeed = -10;
-            gp.sound.setFile(gp.sound.jump);
-            if (jumpPressedFrame == 1) // 只在起跳第一帧播放音效
+            landed = false; // 标记浮空
+            if (jumpPressedFrame == 1) {// 只在起跳第一帧播放音效
+                gp.sound.setFile(gp.sound.jump);
                 gp.sound.play();
+            }
         }
         if (keyHandler.jumpReleased) {
             jumpPressedFrame = 0;
@@ -82,7 +84,7 @@ public class Player extends Entity {
         }
 
         if (landed)
-            jumpSize = 0;
+            jumpSize = 0; // 落地重置跳跃次数
 
         y += vSpeed;
         vSpeed += Constant.G;

@@ -27,18 +27,19 @@ public class TileManager {
     public void getTileImage() {
 
 
-        setup(0, "grass", false);
-        setup(1, "wall", true);
-        setup(2, "water", true);
+        setup(0, "grass", false, false);
+        setup(1, "wall", true, false);
+        setup(2, "water", false, true);
     }
 
-    public void setup(int index, String imageName, boolean collision) {
+    public void setup(int index, String imageName, boolean collision, boolean platform) {
 
         try {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
             tile[index].image = UtilityTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
             tile[index].collision = collision;
+            tile[index].platform = platform;
         } catch (Exception e) {}
     }
 
