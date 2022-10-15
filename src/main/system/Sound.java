@@ -28,7 +28,12 @@ public class Sound {
         }
     }
 
-    public void playEffect(Clip clip) {if (!muted) clip.setFramePosition(0); clip.start();}
+    public void playEffect(Clip clip) {
+
+        if (muted) return;
+        clip.setFramePosition(0);
+        clip.start();
+    }
 
     public void playBgm()  {if (!muted) bgm.start();}
 

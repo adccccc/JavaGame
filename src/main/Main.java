@@ -15,9 +15,7 @@ public class Main {
         window.setTitle(Constant.GAME_TITLE);
 
         window.add(GamePanel.instance);
-
         window.pack();  // show window
-
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
