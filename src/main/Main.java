@@ -3,7 +3,6 @@ package main;
 import main.system.GamePanel;
 
 import javax.swing.*;
-import java.io.IOException;
 
 public class Main {
 
@@ -20,7 +19,7 @@ public class Main {
         window.setVisible(true);
 
         GamePanel.instance.setupGame();
-        GamePanel.instance.startGameThread();
+        GamePanel.instance.startPanelThread();
     }
 
 }

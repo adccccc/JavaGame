@@ -35,15 +35,15 @@ public class GamePanel extends JPanel implements Runnable {
     public int playerInitX, playerInitY; // 小黑子的初始坐标
 
     // SYSTEM
-    public UI ui = new UI();
+    public UI ui = new UI(this);
+    public TileManager tileManager = new TileManager(this);
+    public GameObjectManager gameObjectManager = new GameObjectManager(this);
+    public KeyHandler keyHandler = new KeyHandler(this);
     public Sound sound = new Sound();
-    public TileManager tileManager = new TileManager();
-    public GameObjectManager gameObjectManager = new GameObjectManager();
-    KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
 
     // ENTITY
-    public Player player = new Player(keyHandler);
+    public Player player = new Player(this, keyHandler);
 
     private GamePanel() {
 
@@ -61,19 +61,22 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
 
+        // 初始化配置
         gameState = TITLE_STATE;
         difficulty = 3; // 初始难度选项
         currentLevel = 1; // 初始关卡选项
+
+        // 加载地图
         resetLevel(true);
     }
+
+    public void startPanelThread() { (gameThread = new Thread(this)).start(); }
 
     public void startGame() {
 
         gameState = PLAY_STATE;
         sound.playBgm();
     }
-
-    public void startGameThread() { (gameThread = new Thread(this)).start(); }
 
     public void changePause() {this.gameState = this.gameState == PAUSE_STATE ? PLAY_STATE : PAUSE_STATE;}
 
@@ -97,14 +100,11 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.currentTimeMillis();
         long currentTime;
-        long timer = 0;
-        int drawCount = 0;
 
         while (gameThread != null) {
             currentTime = System.currentTimeMillis();
 
             delta += (currentTime - lastTime) / drawInterval;
-            timer += (currentTime - lastTime);
             lastTime = currentTime;
 
             if (delta >= 1) {
@@ -113,15 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
                 // 2. DRAW: draw the screen
                 repaint();
                 delta --;
-                drawCount++;
             }
-
-            if (timer >= 1000) {
-                System.out.println("FPS: " + drawCount);
-                drawCount = 0;
-                timer = 0;
-            }
-
         }
     }
 

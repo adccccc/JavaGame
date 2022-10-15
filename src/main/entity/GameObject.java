@@ -1,9 +1,11 @@
 package main.entity;
 
+import main.event.action.Action;
 import main.system.collision.shape.Circle;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.List;
 
 public class GameObject extends Entity {
@@ -15,6 +17,30 @@ public class GameObject extends Entity {
      */
     public List<Point> solidArea = new ArrayList<>();
     public Circle solidCircle;  // 圆形碰撞区域
+    public List<Action> actionList = new LinkedList<>();
 
+    // public GameObject(BufferedImage img, double width, double height, )
 
+    // 检查并执行物体附带的动作
+    public void checkAndExecuteAction() {
+
+        if (actionList == null || actionList.isEmpty())
+            return;
+
+        ListIterator<Action> iter = actionList.listIterator();
+        while (iter.hasNext()) {
+            Action action = iter.next();
+            if (action.finished()) {
+                // 执行完毕,从动作列表移除
+                iter.remove();
+                // 将后继动作添加到动作列表
+                if (action.followList != null)
+                    for (Action followed : action.followList)
+                        iter.add(followed);
+            } else if (action.checkTrigger()) {
+                // 达到触发条件时，执行动作
+                action.execute(this);
+            }
+        }
+    }
 }
