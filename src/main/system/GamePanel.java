@@ -35,15 +35,15 @@ public class GamePanel extends JPanel implements Runnable {
     public int playerInitX, playerInitY; // 小黑子的初始坐标
 
     // SYSTEM
-    public UI ui = new UI(this);
+    public UI ui = new UI();
     public Sound sound = new Sound();
-    public TileManager tileManager = new TileManager(this);
-    public GameObjectManager gameObjectManager = new GameObjectManager(this);
-    KeyHandler keyHandler = new KeyHandler(this);
+    public TileManager tileManager = new TileManager();
+    public GameObjectManager gameObjectManager = new GameObjectManager();
+    KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
 
     // ENTITY
-    public Player player = new Player(this, keyHandler);
+    public Player player = new Player(keyHandler);
 
     private GamePanel() {
 
@@ -126,9 +126,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
         if (gameState == PLAY_STATE) player.update();
-        if (gameState == PAUSE_STATE) ;
     }
 
     @Override

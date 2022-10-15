@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 
 public class UI {
 
-    GamePanel gp;
+    GamePanel gp = GamePanel.instance;
     Graphics2D g2;
     Font ariel40;
     double playTime;
@@ -15,9 +15,8 @@ public class UI {
     public int currentCommand = 1;
     public final int COMMAND_MAX_NUM = 4;
 
-    public UI (GamePanel gp) {
+    public UI () {
 
-        this.gp = gp;
         ariel40 = new Font("宋体", Font.BOLD, 30);
     }
 

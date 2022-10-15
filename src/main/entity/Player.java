@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class Player extends Entity {
 
-    GamePanel gp;
+    GamePanel gp = GamePanel.instance;
     KeyHandler keyHandler;
     int hp = 1; // 生命值
     int jumpCount = 0; // 已经进行了几段跳
@@ -27,9 +27,8 @@ public class Player extends Entity {
     public boolean collisionOn = false; // 是否产生碰撞
     public int retryNum = 0;
 
-    public Player(GamePanel gp, KeyHandler keyH) {
+    public Player(KeyHandler keyH) {
 
-        this.gp = gp;
         this.keyHandler = keyH;
         resetProperties();
         getPlayerImage();

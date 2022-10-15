@@ -5,12 +5,12 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
-    public GamePanel gp;
+    GamePanel gp = GamePanel.instance;
     public boolean leftPressed, leftReleased, rightPressed, rightReleased;
     public boolean jumpPressed, jumpReleased;
     public boolean firePressed;
 
-    public KeyHandler(GamePanel gp) {this.gp = gp;}
+    public KeyHandler() {}
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -57,5 +57,5 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_X) { firePressed = pressed; }
     }
 
-    private void pauseStateKeyPressed(KeyEvent e) {if (e.getKeyCode() == KeyEvent.VK_P) gp.changePause();}
+    private void pauseStateKeyPressed(KeyEvent e) {if (e.getKeyCode() == KeyEvent.VK_P) GamePanel.instance.changePause();}
 }
