@@ -10,6 +10,8 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
+    // 全局单例
+    public static final GamePanel instance = new GamePanel();
     // 画面设置
     public final int originalTileSize = 16; // 16x16 tile
     public final int scale = 2;
@@ -43,13 +45,18 @@ public class GamePanel extends JPanel implements Runnable {
     // ENTITY
     public Player player = new Player(this, keyHandler);
 
-    public GamePanel() throws Exception {
+    private GamePanel() {
 
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
-        this.setDoubleBuffered(true); // better rendering performance
-        this.addKeyListener(keyHandler);
-        this.setFocusable(true);
+        try {
+            this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+            this.setBackground(Color.black);
+            this.setDoubleBuffered(true); // better rendering performance
+            this.addKeyListener(keyHandler);
+            this.setFocusable(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     public void setupGame() {

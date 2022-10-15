@@ -14,16 +14,15 @@ public class Main {
         window.setResizable(false);
         window.setTitle(Constant.GAME_TITLE);
 
-        GamePanel gamePanel = new GamePanel();
-        window.add(gamePanel);
+        window.add(GamePanel.instance);
 
         window.pack();  // show window
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        gamePanel.setupGame();
-        gamePanel.startGameThread();
+        GamePanel.instance.setupGame();
+        GamePanel.instance.startGameThread();
     }
 
 }

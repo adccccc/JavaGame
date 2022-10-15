@@ -15,4 +15,6 @@ public class GameObject extends Entity {
      */
     public List<Point> solidArea = new ArrayList<>();
     public Circle solidCircle;  // 圆形碰撞区域
+
+
 }
