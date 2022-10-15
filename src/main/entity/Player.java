@@ -98,6 +98,8 @@ public class Player extends Entity {
     // 受伤
     public void gotHurt() {
 
+        retryNum++;
+        gp.gameState = gp.FAILED_STATE;
         gp.sound.playEffect(gp.sound.dead);
     }
 

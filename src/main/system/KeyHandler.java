@@ -21,6 +21,10 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.TITLE_STATE) titleStateKeyPressed(e);
         if (gp.gameState == gp.PLAY_STATE) playStateKeyPressed(e, true);
         if (gp.gameState == gp.PAUSE_STATE || gp.gameState == gp.PLAY_STATE) pauseStateKeyPressed(e);
+        if (gp.gameState == gp.FAILED_STATE && e.getKeyCode() == KeyEvent.VK_R) {
+            gp.gameState = gp.PLAY_STATE;
+            gp.resetLevel(false);
+        }
         if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute(); // 音量开关
     }
 

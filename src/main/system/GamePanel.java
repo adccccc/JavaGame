@@ -31,6 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int TITLE_STATE = 0;
     public final int PLAY_STATE = 1;
     public final int PAUSE_STATE = 2;
+    public final int FAILED_STATE = 3;
 
     public int playerInitX, playerInitY; // 小黑子的初始坐标
 

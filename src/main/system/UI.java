@@ -29,6 +29,13 @@ public class UI {
         if (gp.gameState == gp.TITLE_STATE) { drawTitleScreen(); }
         if (gp.gameState == gp.PLAY_STATE) { drawPlayScreen(); }
         if (gp.gameState == gp.PAUSE_STATE) { drawPauseScreen(); }
+        if (gp.gameState == gp.FAILED_STATE) drawFailedScreen();
+    }
+
+    public void drawFailedScreen() {
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
+        drawTextAtCenter("按 R 键再来一次", 400, Color.BLACK);
     }
 
     public void drawPlayScreen() {
