@@ -1,6 +1,6 @@
 package main.tile;
 
-import main.GamePanel;
+import main.system.GamePanel;
 import main.tool.UtilityTool;
 
 import javax.imageio.ImageIO;
@@ -21,7 +21,6 @@ public class TileManager {
         tile = new Tile[10];
         mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
         getTileImage();
-        loadMap("/maps/map01.csv");
     }
 
     public void getTileImage() {
@@ -43,10 +42,10 @@ public class TileManager {
         } catch (Exception e) {}
     }
 
-    public void loadMap(String filePath) {
+    public void loadMap(int level) {
 
         try {
-            InputStream in = getClass().getResourceAsStream(filePath);
+            InputStream in = getClass().getResourceAsStream("/maps/map" + level + ".csv");
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             int col = 0;
