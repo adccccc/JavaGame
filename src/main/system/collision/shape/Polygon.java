@@ -1,5 +1,7 @@
 package main.system.collision.shape;
 
+import java.util.Arrays;
+
 // 多边形
 public class Polygon {
 
@@ -7,8 +9,15 @@ public class Polygon {
     public Vector[] edges;
     public Vector[] normals;
     public Polygon(Vector... points) { resetPoints(points); }
+    public Polygon(double w, double h) { resetPoints(new Vector(0,0), new Vector(0, w), new Vector(w, h), new Vector(w, 0));}
+    public Polygon(Polygon another, Vector offset) {
+        this.basePoints = new Vector[another.basePoints.length];
+        for (int i = 0; i < another.basePoints.length; i++)
+            this.basePoints[i] = another.basePoints[i].plus(offset);
+        reCalculate();
+    }
 
-    public void resetPoints(Vector[] points) {
+    public void resetPoints(Vector... points) {
 
         this.basePoints = points.clone();
         reCalculate();

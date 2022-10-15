@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class Player extends Entity {
 
-    GamePanel gp;
+    public GamePanel gp;
     KeyHandler keyHandler;
     int hp = 1; // 生命值
     int jumpCount = 0; // 已经进行了几段跳
@@ -39,6 +39,8 @@ public class Player extends Entity {
 
         x = gp.playerInitX;
         y = gp.playerInitY;
+        width = 32;
+        height = 32;
         hSpeed = 3;
         vSpeed = 0;
         hp = (gp.MAX_DIFFICULTY - gp.difficulty + 1) * 2 - 1; // 初始生命值与难度的关联公式
@@ -93,15 +95,10 @@ public class Player extends Entity {
         y += vSpeed;
     }
 
-    public void draw(Graphics2D g2) {
-
-        BufferedImage image = img;
-        g2.drawImage(image, (int)x, (int)y,null);
-    }
-
     // 受伤
     public void gotHurt() {
 
+        gp.sound.playEffect(gp.sound.dead);
     }
 
 }

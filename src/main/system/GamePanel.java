@@ -80,16 +80,24 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void changePause() {this.gameState = this.gameState == PAUSE_STATE ? PLAY_STATE : PAUSE_STATE;}
 
+    public void nextLevel() {
+
+        // TODO 这里可以做通关特效
+        currentLevel++;
+        resetLevel(true);
+        sound.playEffect(sound.nextLevel); // 通关语音
+    }
+
     /**
      * 加载地图
      * 新关卡 / 死亡重置时使用
      */
     public void resetLevel(boolean reloadMap) {
 
-        playerInitX = 100;
+        playerInitX = 100; // 这里要读配置
         playerInitY = 100;
         player.resetProperties();
-        gameObjectManager.reloadGameObject(); // 重新加载游戏物体
+        gameObjectManager.reloadGameObject(this.currentLevel); // 重新加载游戏物体
         if (reloadMap) tileManager.loadMap(this.currentLevel); // 跳关时加载地图
     }
 
@@ -112,13 +120,16 @@ public class GamePanel extends JPanel implements Runnable {
                 update();
                 // 2. DRAW: draw the screen
                 repaint();
-                delta --;
+                delta--;
             }
         }
     }
 
     public void update() {
-        if (gameState == PLAY_STATE) player.update();
+        if (gameState == PLAY_STATE) {
+            player.update();
+            gameObjectManager.update();
+        }
     }
 
     @Override
@@ -130,9 +141,10 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == TITLE_STATE) {
 
         } else {
-            tileManager.draw(g2);
-            player.draw(g2);
-            ui.draw(g2);
+            tileManager.draw(g2); // 背景层
+            gameObjectManager.draw(g2); // 物品层
+            player.draw(g2); // 人物
+            ui.draw(g2); // UI
         }
         g2.dispose();
     }

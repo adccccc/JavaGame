@@ -34,7 +34,7 @@ public class TileManager {
 
         try {
             tile[index] = new Tile();
-            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
             tile[index].image = UtilityTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
             tile[index].collision = collision;
             tile[index].platform = platform;
@@ -44,7 +44,7 @@ public class TileManager {
     public void loadMap(int level) {
 
         try {
-            InputStream in = getClass().getResourceAsStream("/maps/map" + level + ".csv");
+            InputStream in = getClass().getResourceAsStream("/maps/tile" + level + ".csv");
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             int col = 0, row = 0;

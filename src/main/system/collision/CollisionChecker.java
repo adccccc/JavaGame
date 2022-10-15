@@ -77,7 +77,13 @@ public class CollisionChecker {
 
     public static void checkGameObject(Player player, GameObject gameObject) {
 
-
+        Polygon playerSolidPolyGon = new Polygon(new Vector(player.x + player.solidRect.x, player.y + player.solidRect.y),
+                new Vector(player.x + player.solidRect.x, player.y + player.solidRect.y + player.solidRect.height),
+                new Vector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y),
+                new Vector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y + player.solidRect.height));
+        if (gameObject.shape == 0 && polygonsCollide(playerSolidPolyGon, new Polygon(gameObject.collisionPoly, new Vector(gameObject.x, gameObject.y)))) {
+            gameObject.onCollision(player);
+        };
     }
 
     /**
