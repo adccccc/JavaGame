@@ -14,11 +14,12 @@ public class Sound {
     public Sound() throws Exception {
 
         // 加载音效
-        (jump = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(getClass().getResourceAsStream("/sounds/t_1.wav")));
-        (dead = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(getClass().getResourceAsStream("/sounds/ngm_2.wav")));
+        // 这里的InputStream要包装成BufferedInputStream, 才能提供给AudioSystem调用, 不然可能会IOException
+        (jump = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/t_1.wav"))));
+        (dead = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/ngm_2.wav"))));
         // 加载MIDI背景音乐
         (bgm = MidiSystem.getSequencer()).open();
-        InputStream is = new BufferedInputStream(getClass().getResourceAsStream("/sounds/jntm.mid"));
+        BufferedInputStream is = new BufferedInputStream(getClass().getResourceAsStream("/sounds/jntm.mid"));
         bgm.setSequence(is);
         bgm.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
     }

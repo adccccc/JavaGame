@@ -3,7 +3,7 @@ package main.system;
 import main.Constant;
 import main.entity.GameObjectManager;
 import main.entity.Player;
-import main.tile.TileManager;
+import main.entity.TileManager;
 
 import javax.swing.*;
 import java.awt.*;

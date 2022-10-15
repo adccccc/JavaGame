@@ -6,7 +6,7 @@ import main.entity.Player;
 import java.awt.*;
 import main.system.collision.shape.Polygon;
 import main.system.collision.shape.Vector;
-import main.tile.TileManager;
+import main.entity.TileManager;
 
 
 import java.util.Arrays;

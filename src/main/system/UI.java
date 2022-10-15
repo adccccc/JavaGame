@@ -83,7 +83,4 @@ public class UI {
         if (color != null) g2.setColor(color);
         g2.drawString(text, x, y);
     }
-
-
-
 }
