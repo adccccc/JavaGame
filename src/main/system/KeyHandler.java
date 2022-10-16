@@ -58,11 +58,11 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
             leftPressed = pressed;
             leftReleased = !pressed;
-            gp.player.direction = "left";
+            gp.player.turnLeft = true;
         } else if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
             rightPressed = pressed;
             rightReleased = !pressed;
-            gp.player.direction = "right";
+            gp.player.turnLeft = false;
         }
         if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) { jumpPressed = pressed; jumpReleased = !pressed; }
         if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_X) { firePressed = pressed; }

@@ -35,13 +35,13 @@ public class CollisionChecker {
         int entityBottomRow = bottomY / Constant.TILE_SIZE;
 
         int tileNum1, tileNum2;
-        if (Constant.Direction.LEFT.equals(player.direction)) {
+        if (player.turnLeft) {
             int nextLeftCol = (leftX - (int)player.hSpeed - 1) / Constant.TILE_SIZE;
             tileNum1 = tileManager.mapTileNum[nextLeftCol][entityTopRow];
             tileNum2 = tileManager.mapTileNum[nextLeftCol][entityBottomRow];
             if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
                 player.collisionOn = true;
-        } else if (Constant.Direction.RIGHT.equals(player.direction)) {
+        } else {
             int nextRightCol = (rightX + (int)player.hSpeed + 1) / Constant.TILE_SIZE;
             tileNum1 = tileManager.mapTileNum[nextRightCol][entityTopRow];
             tileNum2 = tileManager.mapTileNum[nextRightCol][entityBottomRow];

@@ -26,7 +26,7 @@ public class TileManager {
     public void getTileImage() {
 
         setup(1, "Green", false, false);
-        setup(2, "wall", true, false);
+        setup(2, "wall_32", true, false);
         setup(3, "platform", false, true);
     }
 
@@ -35,7 +35,6 @@ public class TileManager {
         try {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
-            tile[index].image = UtilityTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
             tile[index].collision = collision;
             tile[index].platform = platform;
         } catch (Exception e) {}

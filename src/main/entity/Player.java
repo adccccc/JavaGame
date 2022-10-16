@@ -29,7 +29,6 @@ public class Player extends Entity {
     public Rectangle solidRect; // 角色的实际碰撞区域
     public String direction; // 角色朝向
     public boolean landed = false; // 踩在地面上
-    public boolean leftCollision, rightCollision, topCollision, bottomCollision, anyCollision = false; // 角色各方向是否产生碰撞
     public boolean collisionOn = false; // 是否产生碰撞
     public int retryNum = 0;
 
@@ -46,7 +45,6 @@ public class Player extends Entity {
 
         x = gp.playerInitX;
         y = gp.playerInitY;
-        direction = "right";
         width = 32;
         height = 32;
         hSpeed = 3;
@@ -75,8 +73,8 @@ public class Player extends Entity {
 
     public void update() {
 
-        if (keyHandler.leftPressed) direction = "left";
-        if (keyHandler.rightPressed) direction = "right";
+        if (keyHandler.leftPressed) turnLeft = true;
+        if (keyHandler.rightPressed) turnLeft = false;
         if (keyHandler.jumpPressed && jumpCount < 2 && canJump) {
             vSpeed = ++jumpCount == 1 ? -jump1Speed : -jump2Speed; // 一段跳和2段跳的速度不一致
             landed = false; // 标记浮空
