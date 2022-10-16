@@ -2,7 +2,7 @@ package main;
 
 public class Constant {
 
-    public static final String GAME_TITLE = "I wanna try again";
+    public static final String GAME_TITLE = "小黑子的大冒险";
 
     public static final int TILE_SIZE = 32; // 瓦片尺寸，32*32像素
 

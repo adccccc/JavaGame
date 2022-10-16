@@ -43,7 +43,7 @@ public class UI {
         g2.drawString("你干嘛： " + gp.player.retryNum, 20, 40);
         playTime += (double)1/ Constant.FPS;
         int minutes = (int)playTime / 60;
-        g2.drawString("Time: " + minutes + ":" + dFormat.format(playTime - minutes * 60), gp.tileSize * 11, 65);
+        g2.drawString("Time: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 550, 40);
     }
 
     public void drawTitleScreen() {
@@ -54,7 +54,7 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
 
         // 标题
-        String text = "小黑子大冒险";
+        String text = "小黑子的大冒险";
         int x = getXForCenteredText(text);
         int y = gp.screenHeight / 4;
         // 增加字体阴影
@@ -62,17 +62,21 @@ public class UI {
         drawText(text, x, y, Color.WHITE);
 
         // 像素小人
-        g2.drawImage(gp.player.img, gp.screenWidth / 2, gp.screenHeight / 2, 100, 80, null);
+        g2.drawImage(gp.player.img.getImg(), gp.screenWidth / 2 - 60, gp.screenHeight / 2 - 120, 100, 80, null);
 
         // 菜单
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
-        drawText(">", 240, 380 + currentCommand * 60, Color.YELLOW);
-        drawText( "开始冒险", 290,440, Color.RED);
-        drawText( "关卡: " + (gp.currentLevel == 10 ? "BOSS" : gp.currentLevel), 290, 500, Color.BLUE);
+        drawText(">", 240, 300 + currentCommand * 60, Color.YELLOW);
+        drawText( "开始冒险", 290,360, Color.RED);
+        drawText( "关卡: " + (gp.currentLevel == 10 ? "BOSS" : gp.currentLevel), 290, 420, Color.BLUE);
         StringBuilder difficultDescribe = new StringBuilder("难度: ☆");
         for (int i = 1; i < gp.difficulty; i++) difficultDescribe.append("☆");
-        drawText( difficultDescribe.toString() , 290,560, Color.BLUE);
-        drawText( "音效: " + (gp.sound.muted ? "关" : "开") , 290,620, Color.BLUE);
+        drawText( difficultDescribe.toString() , 290,480, Color.BLUE);
+        drawText( "音效: " + (gp.sound.muted ? "关" : "开") , 290,540, Color.BLUE);
+
+        // 操作说明
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
+        drawTextAtCenter("操作说明: 方向键/WASD-移动 空格/SHIFT-跳跃 P-暂停 R-重置 M-音效", 600, Color.CYAN);
     }
 
     public void drawPauseScreen() {

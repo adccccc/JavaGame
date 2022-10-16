@@ -1,10 +1,10 @@
 package main.entity;
 
+import main.system.DynamicImage;
 import main.system.collision.CollisionChecker;
 import main.Constant;
 import main.system.GamePanel;
 import main.system.KeyHandler;
-import main.tool.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,6 +17,12 @@ public class Player extends Entity {
     KeyHandler keyHandler;
     int hp = 1; // 生命值
     int jumpCount = 0; // 已经进行了几段跳
+
+    boolean invincible = false; // 是否受伤后无敌状态
+    int invincibleFrameCount = 0; // 无敌帧计数
+    final int MAX_INVINCIBLE_FRAME = 50; // 无敌帧总长度
+    public DynamicImage invincibleImg; // 无敌特效
+
     double jump1Speed = 8.5, jump2Speed = 7.0;
     double jumpReleaseCoefficient = 0.45; // 跳跃键释放后的上升速度系数
     boolean canJump = false; // 跳跃键未释放时的标记，此时不能重复跳跃
@@ -27,39 +33,44 @@ public class Player extends Entity {
     public boolean collisionOn = false; // 是否产生碰撞
     public int retryNum = 0;
 
+
     public Player(GamePanel gp, KeyHandler keyH) {
 
         this.gp = gp;
         this.keyHandler = keyH;
         resetProperties();
-        getPlayerImage();
+        loadPlayerImage();
     }
 
     public void resetProperties() {
 
         x = gp.playerInitX;
         y = gp.playerInitY;
+        direction = "right";
         width = 32;
         height = 32;
         hSpeed = 3;
         vSpeed = 0;
         hp = (gp.MAX_DIFFICULTY - gp.difficulty + 1) * 2 - 1; // 初始生命值与难度的关联公式
-        solidRect = new Rectangle(6, 6, 20, 25);
+        solidRect = new Rectangle(8, 8, 16, 23);
     }
 
-    public void getPlayerImage() {
+    public void loadPlayerImage() {
 
-        img = setup("1");
+        img = setup(10, "stand.png", "stand2.png");
+        invincibleImg = setup(4,"1.png", "1.png");
     }
 
-    public BufferedImage setup(String imageName) {
+    public DynamicImage setup(int frame, String... imageNames) {
 
-        BufferedImage image = null;
+        BufferedImage[] images = new BufferedImage[imageNames.length];
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/" + imageName + ".png")));
-            image = UtilityTool.scaleImage(image, gp.tileSize, gp.tileSize);
-        } catch (Exception e) {}
-        return image;
+            for (int i = 0; i < imageNames.length; i++)
+                images[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/" + imageNames[i])));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new DynamicImage(frame, images);
     }
 
     public void update() {
@@ -93,14 +104,34 @@ public class Player extends Entity {
             vSpeed *= jumpReleaseCoefficient;
         vSpeed += Constant.G; // 先减速,再移动
         y += vSpeed;
+
+        if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { // 无敌时间
+            invincible = false;
+            invincibleFrameCount = 0;
+        }
     }
 
     // 受伤
     public void gotHurt() {
 
-        retryNum++;
-        gp.gameState = gp.FAILED_STATE;
-        gp.sound.playEffect(gp.sound.dead);
+        if (invincible) // 无敌时免疫伤害
+            return;
+        --hp;
+        if (hp == 0) { // 死亡
+            retryNum++;
+            gp.gameState = gp.FAILED_STATE;
+            gp.sound.playEffect(gp.sound.dead);
+        } else if (hp > 0) { // 受伤
+            invincible = true; // 无敌
+            gp.sound.playEffect(gp.sound.hurt);
+        }
     }
 
+    @Override
+    public void draw(Graphics2D g2) {
+
+        super.draw(g2);
+        if (invincible) // 加一层无敌特效
+            g2.drawImage(invincibleImg.getImg(), (int)x, (int)y, width, height, null );
+    }
 }

@@ -21,7 +21,7 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.TITLE_STATE) titleStateKeyPressed(e);
         if (gp.gameState == gp.PLAY_STATE) playStateKeyPressed(e, true);
         if (gp.gameState == gp.PAUSE_STATE || gp.gameState == gp.PLAY_STATE) pauseStateKeyPressed(e);
-        if (gp.gameState == gp.FAILED_STATE && e.getKeyCode() == KeyEvent.VK_R) {
+        if ((gp.gameState == gp.FAILED_STATE || gp.gameState == gp.PLAY_STATE) && e.getKeyCode() == KeyEvent.VK_R) {
             gp.gameState = gp.PLAY_STATE;
             gp.resetLevel(false);
         }
@@ -44,19 +44,26 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_A) {
             if (gp.ui.currentCommand == 2) gp.currentLevel = --gp.currentLevel < 1 ? gp.TOTAL_LEVEL : gp.currentLevel;
             if (gp.ui.currentCommand == 3) gp.difficulty = --gp.difficulty < 1 ? gp.MAX_DIFFICULTY : gp.difficulty;
-            if (gp.ui.currentCommand == 4) gp.sound.muted = !gp.sound.muted;
+            if (gp.ui.currentCommand == 4) gp.sound.changeMute();
         } else if (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_D) {
             if (gp.ui.currentCommand == 2) gp.currentLevel = ++gp.currentLevel > gp.TOTAL_LEVEL ? 1 : gp.currentLevel;
             if (gp.ui.currentCommand == 3) gp.difficulty = ++gp.difficulty > gp.MAX_DIFFICULTY ? 1 : gp.difficulty;
-            if (gp.ui.currentCommand == 4) gp.sound.muted = !gp.sound.muted;
+            if (gp.ui.currentCommand == 4) gp.sound.changeMute();
         }
     }
 
     private void playStateKeyPressed(KeyEvent e, boolean pressed) {
 
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) { leftPressed = pressed; leftReleased = !pressed; }
-        if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) { rightPressed = pressed; rightReleased = !pressed; }
+        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
+            leftPressed = pressed;
+            leftReleased = !pressed;
+            gp.player.direction = "left";
+        } else if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
+            rightPressed = pressed;
+            rightReleased = !pressed;
+            gp.player.direction = "right";
+        }
         if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) { jumpPressed = pressed; jumpReleased = !pressed; }
         if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_X) { firePressed = pressed; }
     }

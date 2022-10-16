@@ -2,9 +2,9 @@ package main.entity;
 
 import main.Constant;
 import main.event.effect.CollisionEffect;
-import main.system.GamePanel;
-import main.system.collision.CollisionChecker;
-import main.system.collision.shape.Circle;
+import main.system.*;
+import main.system.collision.*;
+import main.system.collision.shape.*;
 import main.system.collision.shape.Polygon;
 import main.system.collision.shape.Vector;
 
@@ -32,18 +32,22 @@ public class GameObjectManager {
 
     private void loadLibrary() {
 
-        Polygon triangle = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
-        setup(0, "spike_up.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangle, null, CollisionEffect.HURT_PLAYER);
-        setup(1, "spike_down.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangle, null, CollisionEffect.HURT_PLAYER);
-        setup(2, "spike_left.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangle, null, CollisionEffect.HURT_PLAYER);
-        setup(3, "spike_right.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangle, null, CollisionEffect.HURT_PLAYER);
+        Polygon triangleUp = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
+        Polygon triangleDown = new Polygon(new Vector(0, 0), new Vector(Constant.TILE_SIZE-1, 0), new Vector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
+        Polygon triangleLeft = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
+        Polygon triangleRight = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
+        setup(4, "spike_up.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangleUp, null, CollisionEffect.HURT_PLAYER);
+        setup(5, "spike_down.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangleDown, null, CollisionEffect.HURT_PLAYER);
+        setup(6, "spike_left.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangleLeft, null, CollisionEffect.HURT_PLAYER);
+        setup(7, "spike_right.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangleRight, null, CollisionEffect.HURT_PLAYER);
+        setup(8, "next_level.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, false, 0, triangleRight, null, CollisionEffect.NEXT_LEVEL);
     }
 
     private void setup(int index, String imageName, int width, int height, boolean isSolid, boolean isPlatform, int shape, Polygon poly, Circle circle, CollisionEffect effect) {
 
         try {
             objectLibrary[index] = new GameObject();
-            objectLibrary[index].img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + imageName)));
+            objectLibrary[index].img = new DynamicImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + imageName))));
             objectLibrary[index].width = width;
             objectLibrary[index].height = height;
             objectLibrary[index].isSolid = isSolid;
@@ -58,6 +62,7 @@ public class GameObjectManager {
     public void reloadGameObject(int level) {
 
         try {
+            objectList.clear();
             InputStream in = getClass().getResourceAsStream("/maps/object" + level + ".csv");
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
@@ -67,10 +72,10 @@ public class GameObjectManager {
                 while (col < gp.maxScreenCol) {
                     String[] arr = line.split(",");
                     int num = Integer.parseInt(arr[col++]);
-                    if (num < 0) continue;
+                    if (num <= 0) continue;
                     GameObject gameObject = objectLibrary[num].clone();
-                    gameObject.x = col * Constant.TILE_SIZE;
-                    gameObject.y = row * Constant.TILE_SIZE;
+                    gameObject.x = (col-1) * Constant.TILE_SIZE;
+                    gameObject.y = (row) * Constant.TILE_SIZE;
                     objectList.add(gameObject);
                 }
 
@@ -85,18 +90,17 @@ public class GameObjectManager {
 
     public void update() {
 
-        ListIterator<GameObject> iter = objectList.listIterator();
-        while (iter.hasNext()) {
-            GameObject obj = iter.next();
-            if (checkObjectOffMap(obj)) { // 物体被移除
-                iter.remove();
-                continue;
-            }
+        // 这里复制一份再遍历，避免并发修改
+        List<GameObject> copyList = new ArrayList<>(objectList);
+        for (GameObject obj : copyList) {
             obj.checkAndExecuteAction(); // 执行物体动作
             obj.reCalcSpeed(); // 重新计算物体速度
             CollisionChecker.checkGameObject(gp.player, obj); // 检查碰撞
             obj.reCalcLocation(); // 重新计算物体位置
         }
+
+        // 移除失效物体
+        objectList.removeIf(this::checkObjectOffMap);
     }
 
     // 画出所有物体

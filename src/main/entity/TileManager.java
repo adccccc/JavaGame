@@ -25,9 +25,9 @@ public class TileManager {
 
     public void getTileImage() {
 
-        setup(0, "grass", false, false);
-        setup(1, "wall", true, false);
-        setup(2, "water", false, true);
+        setup(1, "Green", false, false);
+        setup(2, "wall", true, false);
+        setup(3, "platform", false, true);
     }
 
     public void setup(int index, String imageName, boolean collision, boolean platform) {

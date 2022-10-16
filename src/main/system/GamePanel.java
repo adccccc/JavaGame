@@ -17,9 +17,9 @@ public class GamePanel extends JPanel implements Runnable {
     public final int scale = 2;
 
     public final int tileSize = originalTileSize * scale; // 32 * 32;
-    public final int maxScreenCol = 24;
+    public final int maxScreenCol = 25;
     public final int maxScreenRow = 20;
-    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
+    public final int screenWidth = tileSize * maxScreenCol; // 800 pixels
     public final int screenHeight = tileSize * maxScreenRow; // 640 pixels
 
     // 游戏状态
@@ -69,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // 加载地图
         resetLevel(true);
+        sound.changeBgm(sound.titleBgm);
     }
 
     public void startPanelThread() { (gameThread = new Thread(this)).start(); }
@@ -76,7 +77,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
 
         gameState = PLAY_STATE;
-        sound.playBgm();
+        sound.changeBgm(sound.gameBgm);
+        resetLevel(true);
     }
 
     public void changePause() {this.gameState = this.gameState == PAUSE_STATE ? PLAY_STATE : PAUSE_STATE;}
@@ -138,15 +140,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        ui.draw(g2);
-        if (gameState == TITLE_STATE) {
-
-        } else {
+        if (gameState == TITLE_STATE) { }
+        else {
             tileManager.draw(g2); // 背景层
             gameObjectManager.draw(g2); // 物品层
             player.draw(g2); // 人物
-            ui.draw(g2); // UI
         }
+        ui.draw(g2);
         g2.dispose();
     }
 
