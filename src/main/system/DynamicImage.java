@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class DynamicImage {
 
     private BufferedImage[] images;
-    private int frame; // 每张图片的帧数
+    private final int frame; // 每张图片的帧数
     private int counter; // 内部计数器
 
     public DynamicImage(int frame, BufferedImage... images) {

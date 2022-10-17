@@ -26,7 +26,9 @@ public class UtilityTool {
         return op.filter(img, null);
     }
 
-    // 旋转
+// ------------------------ 图形旋转相关功能 ------------------------------------
+// ------------------------ 行数超标，删减掉 ------------------------------------
+/*
     public static BufferedImage rotate(BufferedImage original, int rotateAngle) {
 
         int srcWidth = original.getWidth(), srcHeight = original.getHeight();
@@ -67,5 +69,5 @@ public class UtilityTool {
         int des_height = src.height + lenDeltaHeight * 2;
         return new java.awt.Rectangle(new Dimension(des_width, des_height));
     }
-
+ */
 }

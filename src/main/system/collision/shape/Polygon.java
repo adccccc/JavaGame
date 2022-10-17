@@ -1,6 +1,6 @@
 package main.system.collision.shape;
 
-import java.util.Arrays;
+import java.util.List;
 
 // 多边形
 public class Polygon {
@@ -10,6 +10,12 @@ public class Polygon {
     public Vector[] normals;
     public Polygon(Vector... points) { resetPoints(points); }
     public Polygon(double w, double h) { resetPoints(new Vector(0,0), new Vector(0, w), new Vector(w, h), new Vector(w, 0));}
+    public Polygon(List<Double> posList) {
+        basePoints = new Vector[posList.size() / 2];
+        for (int i = 0; i < basePoints.length; i++)
+            basePoints[i] = new Vector(posList.get(i*2), posList.get(i * 2 + 1));
+        reCalculate();
+    }
     public Polygon(Polygon another, Vector offset) {
         this.basePoints = new Vector[another.basePoints.length];
         for (int i = 0; i < another.basePoints.length; i++)

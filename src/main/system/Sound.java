@@ -3,6 +3,7 @@ package main.system;
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
 import java.io.*;
+import java.util.Objects;
 
 public class Sound {
 
@@ -24,19 +25,20 @@ public class Sound {
             (nextLevel = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/lblhnkg.wav"))));
 
             // 加载MIDI背景音乐
-            (titleBgm = MidiSystem.getSequencer()).open();
-            titleBgm.setSequence(new BufferedInputStream(getClass().getResourceAsStream("/sounds/jntmRemix.mid")));
-            titleBgm.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-            (gameBgm = MidiSystem.getSequencer()).open();
-            gameBgm.setSequence(new BufferedInputStream(getClass().getResourceAsStream("/sounds/jntm.mid")));
-            gameBgm.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-            (bossBgm = MidiSystem.getSequencer()).open();
-            bossBgm.setSequence(new BufferedInputStream(getClass().getResourceAsStream("/sounds/jntm.mid")));
-            bossBgm.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+            titleBgm = loadMidi("jntmRemix");
+            gameBgm = loadMidi("jntm");
+            bossBgm = loadMidi("jntmRemix");
             currentBgm = titleBgm;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { } // do nothing
+    }
+
+    private Sequencer loadMidi(String bgmName) throws MidiUnavailableException, InvalidMidiDataException, IOException {
+
+        Sequencer sequencer = MidiSystem.getSequencer();
+        sequencer.open();
+        sequencer.setSequence(new BufferedInputStream(Objects.requireNonNull(getClass().getResourceAsStream("/sounds/" + bgmName + ".mid"))));
+        sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+        return sequencer;
     }
 
     public void playEffect(Clip clip) {

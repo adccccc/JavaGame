@@ -25,4 +25,26 @@ public interface CollisionEffect {
 
     // 效果：通关
     CollisionEffect NEXT_LEVEL = ((gameObject, player) -> player.gp.nextLevel());
+
+    // 效果：存档
+    CollisionEffect SAVE_POINT = (((gameObject, player) -> {
+        player.gp.playerInitX = (int)gameObject.x;
+        player.gp.playerInitY = (int)gameObject.y;
+        gameObject.removed = true; // 移除
+    }));
+
+    // 效果：平台
+    CollisionEffect PLATFORM = (((gameObject, player) -> {
+
+        player.jumpCount = 1; // 碰跳板给小跳
+        // 这个判断条件的-1为了抵消+1
+        if (player.vSpeed >= 0 && (player.y + player.height - player.vSpeed - 1 <= gameObject.y)) { // 仅在下落的时候碰撞
+            player.vSpeed = 0;
+            player.onPlatform = true;
+            player.jumpCount = 0; // 踩板重置跳跃次数
+            player.y = gameObject.y - player.height + 1; // 调整位置，贴住平台（+1是为了固定碰撞位置，因为不加1碰不到，人物要往下掉，会闪）
+            player.platformXDisplacement = gameObject.hSpeed; // 标记横向偏移位置
+            player.platformYDisplacement = gameObject.vSpeed; // 标记竖向偏移位置
+        }
+    }));
 }

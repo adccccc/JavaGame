@@ -11,7 +11,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setTitle(Constant.GAME_TITLE);
+        window.setTitle("小黑子的大冒险");
 
         window.add(GamePanel.instance);
         window.pack();  // show window
@@ -19,7 +19,5 @@ public class Main {
         window.setVisible(true);
 
         GamePanel.instance.setupGame();
-        GamePanel.instance.startPanelThread();
     }
-
 }

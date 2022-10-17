@@ -1,13 +1,13 @@
 package main.system.collision;
 
-import main.Constant;
+import main.system.Constant;
 import main.entity.GameObject;
 import main.entity.Player;
-import java.awt.*;
+
+import main.system.collision.shape.Circle;
 import main.system.collision.shape.Polygon;
 import main.system.collision.shape.Vector;
 import main.entity.TileManager;
-
 
 import java.util.Arrays;
 
@@ -33,73 +33,72 @@ public class CollisionChecker {
         int entityRightCol = rightX / Constant.TILE_SIZE;
         int entityTopRow = topY / Constant.TILE_SIZE;
         int entityBottomRow = bottomY / Constant.TILE_SIZE;
+        // 越界的情况，不检查瓦片碰撞
+        if (entityTopRow < 0 || entityLeftCol < 0 || entityBottomRow >= tileManager.gp.maxScreenRow - 1 || entityRightCol >= tileManager.gp.maxScreenCol)
+            return;
 
         int tileNum1, tileNum2;
-        if (player.turnLeft) {
-            int nextLeftCol = (leftX - (int)player.hSpeed - 1) / Constant.TILE_SIZE;
-            tileNum1 = tileManager.mapTileNum[nextLeftCol][entityTopRow];
-            tileNum2 = tileManager.mapTileNum[nextLeftCol][entityBottomRow];
-            if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
-                player.collisionOn = true;
-        } else {
-            int nextRightCol = (rightX + (int)player.hSpeed + 1) / Constant.TILE_SIZE;
-            tileNum1 = tileManager.mapTileNum[nextRightCol][entityTopRow];
-            tileNum2 = tileManager.mapTileNum[nextRightCol][entityBottomRow];
-            if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
-                player.collisionOn = true;
-        }
+        int nextLeftCol = (leftX - (int)player.hSpeed - 1) / Constant.TILE_SIZE;
+        tileNum1 = tileManager.mapTileNum[nextLeftCol][entityTopRow];
+        tileNum2 = tileManager.mapTileNum[nextLeftCol][entityBottomRow];
+        if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
+            player.leftCollisionOn = true;
 
-        // TODO: 数组越界, 跳到地图外的情况
+        int nextRightCol = (rightX + (int)player.hSpeed + 1) / Constant.TILE_SIZE;
+        tileNum1 = tileManager.mapTileNum[nextRightCol][entityTopRow];
+        tileNum2 = tileManager.mapTileNum[nextRightCol][entityBottomRow];
+        if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
+            player.rightCollisionOn = true;
+
         entityTopRow = (topY + (int)player.vSpeed - 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[entityLeftCol][entityTopRow];
         tileNum2 = tileManager.mapTileNum[entityRightCol][entityTopRow];
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision) {
-            player.vSpeed = 0; // 往上跳，碰撞
+            player.vSpeed = player.platformYDisplacement = 0; // 往上跳，碰撞 (并且落板)
         }
         entityBottomRow = (bottomY + (int)player.vSpeed + 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[entityLeftCol][entityBottomRow];
         tileNum2 = tileManager.mapTileNum[entityRightCol][entityBottomRow];
+
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision) {
             player.vSpeed = 0; // 往下落，碰撞
             player.landed = true; // 踩在地面上
             player.y = (entityBottomRow - 1) * Constant.TILE_SIZE; // 调整位置，贴住地面
-        } else if (tileManager.tile[tileNum1].platform || tileManager.tile[tileNum2].platform) {
-            if ((player.vSpeed > 0 || player.landed) && bottomY < entityBottomRow * Constant.TILE_SIZE) { // 仅在下落的时候碰撞
-                player.vSpeed = 0;
-                player.landed = true;
-                player.y = (entityBottomRow - 1) * Constant.TILE_SIZE; // 调整位置，贴住地面
-            }
         } else {
-            player.landed = false; // 浮空
+            player.landed = false;
         }
     }
 
-
+    // 游戏物体碰撞检测
     public static void checkGameObject(Player player, GameObject gameObject) {
 
+        // 物体的矩形边界转换成多边形
         Polygon playerSolidPolyGon = new Polygon(new Vector(player.x + player.solidRect.x, player.y + player.solidRect.y),
                 new Vector(player.x + player.solidRect.x, player.y + player.solidRect.y + player.solidRect.height),
                 new Vector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y),
                 new Vector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y + player.solidRect.height));
-        if (gameObject.shape == 0 && polygonsCollide(playerSolidPolyGon, new Polygon(gameObject.collisionPoly, new Vector(gameObject.x, gameObject.y)))) {
+
+        if (gameObject.shape == 0 && polygonsCollide(playerSolidPolyGon, new Polygon(gameObject.getCollisionPolyForNull(), gameObject.getScreenStartPos())))
             gameObject.onCollision(player);
-        };
+        if (gameObject.shape == 1 && circleCollide(playerSolidPolyGon, new Circle(gameObject.x + gameObject.width / 2.0, gameObject.y + gameObject.height / 2.0, gameObject.collisionRadius)))
+            gameObject.onCollision(player);
     }
 
     /**
-     * 多边形碰撞检测
-     *
-     * @param posA 物体A坐标
-     * @param areaA   物体A多边形各顶点相对坐标
-     * @param posB 物体B坐标
-     * @param areaB   物体B多边形各顶点相对坐标
-     * @param offsetX A的x坐标偏移，用于运动物体检测
-     * @param offsetY A的y坐标偏移，用于运动物体检测
-     * @return
+     * 圆形碰撞检测
+     * 没有代码空间了，使用8边形模拟圆形，复用代码
+     * TODO 精确算法待实现
      */
-    private static boolean collisionCompute(Point posA, java.util.List<Point> areaA, Point posB, java.util.List<Point> areaB, int offsetX, int offsetY) {
+    private static boolean circleCollide(Polygon a, Circle b) { return polygonsCollide(a, approximateCircle(b)); }
 
-        return false;
+    /**
+     * 将圆形近似为正八边形
+     * 太丑陋了。。。。
+     */
+    private static Polygon approximateCircle(Circle c) {
+
+        double x = c.x, y = c.y, r = c.radius, p = Math.sqrt(c.radius); // 投影
+        return new Polygon(new Polygon(new Vector(0, r), new Vector(p, p), new Vector(r, 0), new Vector(p, -p), new Vector(0, -r), new Vector(-p, -p), new Vector(-r, 0), new Vector(-p, p)), new Vector(x, y));
     }
 
     /**

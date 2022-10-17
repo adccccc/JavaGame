@@ -1,8 +1,5 @@
 package main.system;
 
-import main.Constant;
-import main.tool.UtilityTool;
-
 import java.awt.*;
 import java.text.DecimalFormat;
 
@@ -36,12 +33,12 @@ public class UI {
     public void drawFailedScreen() {
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
-        drawTextAtCenter("按 R 键再来一次", 400, Color.BLACK);
+        drawTextAtCenter("按 R 键再来一次", 300, Color.WHITE);
     }
 
     public void drawPlayScreen() {
 
-        g2.drawString("你干嘛： " + gp.player.retryNum, 20, 40);
+        g2.drawString("重试： " + gp.player.retryNum + "次", 20, 40);
         playTime += (double)1/ Constant.FPS;
         int minutes = (int)playTime / 60;
         g2.drawString("Time: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 550, 40);

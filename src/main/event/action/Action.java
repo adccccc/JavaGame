@@ -12,14 +12,16 @@ public abstract class Action {
     // 动作绑定的对象
     GameObject gameObject;
     // 动作的触发条件
-    Trigger trigger;
+    Trigger trigger = Trigger.IMMEDIATE; // 默认立即触发
     // 动作是否被触发
     boolean triggered = false;
+
+    public Action() {}
 
     public Action(GameObject gameObject, Trigger trigger, List<Action> followList) {
 
         this.gameObject = gameObject;
-        this.trigger = trigger == null ? Trigger.IMMEDIATE : trigger; // 默认立即触发
+        this.trigger = trigger == null ? Trigger.IMMEDIATE : trigger;
         this.followList = followList;
     }
 
@@ -30,7 +32,8 @@ public abstract class Action {
     public abstract void execute(GameObject gameObject);
 
     // 动作是否完成
-    public abstract boolean finished();
+    // 默认为永不
+    public boolean finished() {return false;}
 
     // 动作触发条件的事件接口
     public interface Trigger {

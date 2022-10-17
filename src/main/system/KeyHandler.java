@@ -6,16 +6,12 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     GamePanel gp;
-    public boolean leftPressed, leftReleased, rightPressed, rightReleased;
-    public boolean jumpPressed, jumpReleased;
-    public boolean firePressed;
+    public boolean leftPressed, leftReleased, rightPressed, rightReleased, jumpPressed, jumpReleased;
 
     public KeyHandler(GamePanel gp) {this.gp = gp;}
 
-    @Override
     public void keyTyped(KeyEvent e) {}
 
-    @Override
     public void keyPressed(KeyEvent e) {
 
         if (gp.gameState == gp.TITLE_STATE) titleStateKeyPressed(e);
@@ -28,12 +24,7 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute(); // 音量开关
     }
 
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-        playStateKeyPressed(e, false);
-    }
+    public void keyReleased(KeyEvent e) { playStateKeyPressed(e, false); }
 
     private void titleStateKeyPressed(KeyEvent e) {
 
@@ -64,8 +55,10 @@ public class KeyHandler implements KeyListener {
             rightReleased = !pressed;
             gp.player.turnLeft = false;
         }
-        if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) { jumpPressed = pressed; jumpReleased = !pressed; }
-        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_X) { firePressed = pressed; }
+        if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) {
+            jumpPressed = pressed;
+            jumpReleased = !pressed;
+        }
     }
 
     private void pauseStateKeyPressed(KeyEvent e) {if (e.getKeyCode() == KeyEvent.VK_P) GamePanel.instance.changePause();}
