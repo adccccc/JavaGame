@@ -1,10 +1,7 @@
 package main.entity;
 
-import main.system.DynamicImage;
+import main.system.*;
 import main.system.collision.CollisionChecker;
-import main.system.Constant;
-import main.system.GamePanel;
-import main.system.KeyHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

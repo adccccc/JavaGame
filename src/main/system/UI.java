@@ -28,6 +28,17 @@ public class UI {
         if (gp.gameState == gp.PLAY_STATE)  drawPlayScreen();
         if (gp.gameState == gp.PAUSE_STATE)  drawPauseScreen();
         if (gp.gameState == gp.FAILED_STATE) drawFailedScreen();
+        if (gp.gameState == gp.SUCCESS_STATE) drawSucceedScreen();
+    }
+
+    private void drawSucceedScreen() {
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
+        drawTextAtCenter("恭喜通关！", 200, new Color(255, 215, 0));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+        int minutes = (int)playTime / 60;
+        drawTextAtCenter("重试次数：" + gp.player.retryNum + ", 耗时: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 250, Color.green);
+        if (gp.difficulty == 3 && gp.startLevel == 1) drawTextAtCenter("困难模式挑战成功，请找@dylanou领取小黑子奖励一份", 300, Color.BLACK); // 彩蛋
     }
 
     public void drawFailedScreen() {
@@ -52,7 +63,7 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
 
         // 标题
-        String text = "小黑子的大冒险";
+        String text = "小黑子大冒险";
         int x = getXForCenteredText(text);
         int y = gp.screenHeight / 4;
         // 增加字体阴影
@@ -60,7 +71,7 @@ public class UI {
         drawText(text, x, y, Color.WHITE);
 
         // 像素小人
-        g2.drawImage(gp.player.img.getImg(), gp.screenWidth / 2 - 60, gp.screenHeight / 2 - 120, 100, 80, null);
+        g2.drawImage(gp.player.img.getImg(), gp.screenWidth / 2 - 80, gp.screenHeight / 2 - 120, 100, 100, null);
 
         // 菜单
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));

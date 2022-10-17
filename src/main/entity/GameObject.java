@@ -2,14 +2,14 @@ package main.entity;
 
 import main.event.action.Action;
 import main.event.effect.CollisionEffect;
+import main.system.DynamicImage;
+
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
 
 public class GameObject extends Entity {
 
-    // 是否阻拦人物
-    public boolean isSolid = false;
     // 物体事件
     public List<Action> actionList = new LinkedList<>();
     // 碰撞效果
@@ -25,7 +25,9 @@ public class GameObject extends Entity {
                 field.setAccessible(true);
                 field.set(cloneObj, field.get(this));
             }
-            cloneObj.actionList = new ArrayList<>(this.actionList);
+            cloneObj.surviveTime = 0; // 重新计时
+            cloneObj.img = new DynamicImage(this.img.frame, this.img.images); // 新建GIF集
+            cloneObj.actionList = new ArrayList<>(this.actionList); // 加载默认事件
             return cloneObj;
         } catch (Exception e) { return null;}
     }

@@ -6,15 +6,12 @@ import main.event.effect.CollisionEffect;
 import main.system.*;
 import main.system.collision.*;
 import main.system.collision.shape.*;
-import main.system.collision.shape.Polygon;
-import main.system.collision.shape.Vector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class GameObjectManager {
@@ -36,37 +33,48 @@ public class GameObjectManager {
     private void loadLibrary() throws IOException {
 
         // 初始化游戏所有物体
-        Polygon triangleUp = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
-        Polygon triangleDown = new Polygon(new Vector(0, 0), new Vector(Constant.TILE_SIZE-1, 0), new Vector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
-        Polygon triangleLeft = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
-        Polygon triangleRight = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
-        setup(4, "spike_up.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER);
-        setup(5, "spike_down.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER);
-        setup(6, "spike_left.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER);
-        setup(7, "spike_right.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false,  0, triangleRight, 0, CollisionEffect.HURT_PLAYER);
-        setup(8, "next_level.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false,  0, triangleRight, 0, CollisionEffect.NEXT_LEVEL);
-        setup(9, "platform3.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false,  0, new Polygon(Constant.TILE_SIZE, 12), 0, CollisionEffect.PLATFORM);
-        setup(10, "grass.png", Constant.TILE_SIZE, Constant.TILE_SIZE, false,  1, null, 12, CollisionEffect.SAVE_POINT);
+        CcPolygon triangleUp = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
+        CcPolygon triangleDown = new CcPolygon(new CcVector(0, 0), new CcVector(Constant.TILE_SIZE-1, 0), new CcVector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
+        CcPolygon triangleLeft = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
+        CcPolygon triangleRight = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
+        setup(4, Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER, 1, "spike_up.png");
+        setup(5,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER, 1, "spike_down.png");
+        setup(6,  Constant.TILE_SIZE, Constant.TILE_SIZE,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER, 1, "spike_left.png");
+        setup(7,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, 1, "spike_right.png");
+        setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, 1, "next_level.png");
+        setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, new CcPolygon(Constant.TILE_SIZE, 12), 0, CollisionEffect.PLATFORM, 1, "platform3.png");
+        setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, 1, "save_point.png");
+        setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet1.png", "bullet2.png");
+        setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet_heart.png");
+        setup(13,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, 3, "bullet_blue_0.png","bullet_blue_1.png");
     }
 
-    private void setup(int index, String imageName, int width, int height, boolean isSolid, int shape, Polygon poly, double collisionRadius, CollisionEffect effect) throws IOException {
+    private void setup(int index, int width, int height, int shape, CcPolygon poly, double collisionRadius, CollisionEffect effect, int imgFrame, String... imgNames) throws IOException {
 
         objectLibrary[index] = new GameObject();
-        objectLibrary[index].img = new DynamicImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + imageName))));
+        objectLibrary[index].img = generateDynamicImg(imgFrame, imgNames);
         objectLibrary[index].width = width;
         objectLibrary[index].height = height;
-        objectLibrary[index].isSolid = isSolid;
         objectLibrary[index].shape = shape;
         objectLibrary[index].collisionPoly = poly;
         objectLibrary[index].collisionRadius = collisionRadius;
         objectLibrary[index].collisionEffect = effect == null ? CollisionEffect.NOTHING : effect;
     }
 
+    // 加载成动图
+    public DynamicImage generateDynamicImg(int frame, String... imgName) throws IOException {
+
+        BufferedImage[] imgArr = new BufferedImage[imgName.length];
+        for (int i = 0; i < imgArr.length; i++) imgArr[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + imgName[i])));
+        return new DynamicImage(frame, imgArr);
+    }
+
+
     /// -------------------------------- 地图物体加载 ------------------------------------------
 
     public void reloadGameObject(int level) throws IOException {
 
-        objectList.clear(); // 先清除物体列表
+        objectList = new LinkedList<>(); // 先清除物体列表 (这里不能用clear, 会有ConcurrentModificationException) 但是用new之后也会有小概率遇到
         loadGameObjectFromTextConfig(level); // 从文本配置中加载独立配置的物体
         loadGameObjectFromCsv(level); // 从csv表格中加载批量物体
     }
@@ -150,7 +158,7 @@ public class GameObjectManager {
         if (propMap.containsKey("visible")) gameObject.visible = Boolean.parseBoolean(propMap.get("visible"));
         if (propMap.containsKey("shape")) gameObject.shape = Integer.parseInt(propMap.get("shape"));
         // 从配置中加载碰撞体积
-        if (propMap.containsKey("collisionPoly")) gameObject.collisionPoly = new Polygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
+        if (propMap.containsKey("collisionPoly")) gameObject.collisionPoly = new CcPolygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
         if (propMap.containsKey("collisionRadius")) gameObject.collisionRadius = Double.parseDouble(propMap.get("collisionRadius"));
         // 从配置中加载动作和触发器，因为文本配置不好管理，故限制只能有一个动作
         if (propMap.containsKey("actionName")) gameObject.actionList.add(ActionFactory.getAction(gameObject, propMap.get("actionName"), propMap.get("actionParam"), TriggerFactory.getTrigger(gameObject, propMap.get("triggerName"), propMap.get("triggerParam"))));
@@ -158,7 +166,7 @@ public class GameObjectManager {
         return gameObject;
     }
 
-    /// ---------------------------------- 游戏物体状态更新 -----------------------------------------
+    // ---------------------------------- 游戏物体状态更新 -----------------------------------------
 
     public void update() {
 
@@ -168,6 +176,7 @@ public class GameObjectManager {
             obj.reCalcSpeed(); // 重新计算物体速度
             CollisionChecker.checkGameObject(gp.player, obj); // 检查角色和物体间的碰撞
             obj.reCalcLocation(); // 重新计算物体位置
+            obj.surviveTime++; // 存活计时++
         }
 
         waitToAddList.forEach(newObj -> objectList.addFirst(newObj)); // 新增物体前插到物体
@@ -175,13 +184,8 @@ public class GameObjectManager {
         objectList.removeIf(this::checkObjectOffMap); // 移除失效物体
     }
 
-    // 画出所有物体
-    public void draw(Graphics2D g2) {
-
-        // 由于此方法是系统调用，跟游戏线程不一致，因此需要先复制，避免并发修改异常
-        List<GameObject> copiedList = new ArrayList<>(objectList);
-        for (GameObject obj : copiedList) obj.draw(g2);
-    }
+    // 绘制所有物体
+    public void draw(Graphics2D g2) { for (GameObject obj : objectList) obj.draw(g2); }
 
     // 检查物体是否出屏幕
     private boolean checkObjectOffMap(Entity object) { return object.removed = object.removed || object.x < -100 || object.x > gp.screenWidth + 100 || object.y < -100 || object.y > gp.screenHeight; }

@@ -1,13 +1,10 @@
 package main.entity;
 
 import main.system.GamePanel;
-import main.tool.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class TileManager {
 
@@ -25,18 +22,17 @@ public class TileManager {
 
     public void getTileImage() {
 
-        setup(1, "Green", false, false);
-        setup(2, "wall_32", true, false);
-        setup(3, "platform", false, true);
+        setup(1, "Green", false);
+        setup(2, "wall_32", true);
+        setup(3, "wall_plat", true);
     }
 
-    public void setup(int index, String imageName, boolean collision, boolean platform) {
+    public void setup(int index, String imageName, boolean collision) {
 
         try {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
             tile[index].collision = collision;
-            tile[index].platform = platform;
         } catch (Exception e) {}
     }
 

@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 // 封装动态图效果
 public class DynamicImage {
 
-    private BufferedImage[] images;
-    private final int frame; // 每张图片的帧数
-    private int counter; // 内部计数器
+    public BufferedImage[] images;
+    public final int frame; // 每张图片的帧数
+    public int counter; // 内部计数器
 
     public DynamicImage(int frame, BufferedImage... images) {
 

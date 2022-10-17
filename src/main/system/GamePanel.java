@@ -1,12 +1,9 @@
 package main.system;
 
-import main.entity.GameObjectManager;
-import main.entity.Player;
-import main.entity.TileManager;
+import main.entity.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -20,11 +17,11 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // 640 pixels
 
     // 游戏状态
-    public int currentLevel = 1; // 当前关卡
+    public int currentLevel = 1, startLevel = 1; // 当前关卡和起始关卡
     public final int TOTAL_LEVEL = 10; // 总关卡数目
     public int difficulty = 3; // 当前游戏难度
     public final int MAX_DIFFICULTY = 3; // 总难度级别
-    public final int TITLE_STATE = 0, PLAY_STATE = 1, PAUSE_STATE =  2, FAILED_STATE = 3;
+    public final int TITLE_STATE = 0, PLAY_STATE = 1, PAUSE_STATE =  2, FAILED_STATE = 3, SUCCESS_STATE = 4;
     public int gameState = TITLE_STATE; // 当前游戏状态
 
     public int playerInitX = 0, playerInitY = 0; // 小黑子的初始坐标, 保存在每关的物品配置的第一行
@@ -59,7 +56,6 @@ public class GamePanel extends JPanel implements Runnable {
         // 加载地图
         resetLevel(true);
         sound.changeBgm(sound.titleBgm);
-
         // 游戏线程启动
         (gameThread = new Thread(this)).start();
     }
@@ -67,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
 
         gameState = PLAY_STATE;
+        startLevel = currentLevel; // 记录从哪关开始玩的
         sound.changeBgm(sound.gameBgm);
         try {
             resetLevel(true);
@@ -87,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // 通关
     // TODO 这里做完结内容
-    public void gamePassed() {}
+    public void gamePassed() { this.gameState = SUCCESS_STATE; }
 
     /**
      * 加载地图
@@ -112,7 +109,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         double drawInterval = 1000d / Constant.FPS; // 20ms
         double delta = 0;
-        long currentTime,lastTime = System.currentTimeMillis();
+        long currentTime, lastTime = System.currentTimeMillis();
 
         while (gameThread != null) {
             currentTime = System.currentTimeMillis();
@@ -120,9 +117,7 @@ public class GamePanel extends JPanel implements Runnable {
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
             if (delta >= 1) {
-                // 1. UPDATE:  element position/status...
                 update();
-                // 2. DRAW: draw the screen
                 repaint();
                 delta--;
             }
@@ -136,8 +131,12 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
 
         if (gameState == PLAY_STATE) {
-            gameObjectManager.update();
-            player.update();
+            try {
+                gameObjectManager.update();
+                player.update();
+            } catch (Exception e) { // 必要的catch, 防止某一帧冲突
+                e.printStackTrace();
+            }
         }
     }
 

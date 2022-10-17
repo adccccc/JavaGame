@@ -2,28 +2,34 @@ package main.system.collision.shape;
 
 import java.util.List;
 
-// 多边形
-public class Polygon {
+// tu多边形
+public class CcPolygon {
 
-    public Vector[] basePoints;
-    public Vector[] edges;
-    public Vector[] normals;
-    public Polygon(Vector... points) { resetPoints(points); }
-    public Polygon(double w, double h) { resetPoints(new Vector(0,0), new Vector(0, w), new Vector(w, h), new Vector(w, 0));}
-    public Polygon(List<Double> posList) {
-        basePoints = new Vector[posList.size() / 2];
+    public CcVector[] basePoints;
+    public CcVector[] edges;
+    public CcVector[] normals;
+
+    public CcPolygon(CcVector... points) { resetPoints(points); }
+
+    public CcPolygon(double w, double h) { resetPoints(new CcVector(0,0), new CcVector(0, w), new CcVector(w, h), new CcVector(w, 0));}
+
+    public CcPolygon(List<Double> posList) {
+
+        basePoints = new CcVector[posList.size() / 2];
         for (int i = 0; i < basePoints.length; i++)
-            basePoints[i] = new Vector(posList.get(i*2), posList.get(i * 2 + 1));
+            basePoints[i] = new CcVector(posList.get(i*2), posList.get(i * 2 + 1));
         reCalculate();
     }
-    public Polygon(Polygon another, Vector offset) {
-        this.basePoints = new Vector[another.basePoints.length];
+
+    public CcPolygon(CcPolygon another, CcVector offset) {
+
+        this.basePoints = new CcVector[another.basePoints.length];
         for (int i = 0; i < another.basePoints.length; i++)
             this.basePoints[i] = another.basePoints[i].plus(offset);
         reCalculate();
     }
 
-    public void resetPoints(Vector... points) {
+    public void resetPoints(CcVector... points) {
 
         this.basePoints = points.clone();
         reCalculate();
@@ -31,11 +37,11 @@ public class Polygon {
 
     public void reCalculate() {
 
-        this.edges = new Vector[basePoints.length];
-        this.normals = new Vector[basePoints.length];
+        this.edges = new CcVector[basePoints.length];
+        this.normals = new CcVector[basePoints.length];
         for (int i = 0; i < basePoints.length; i++) {
-            Vector p1 = basePoints[i];
-            Vector p2 = i == basePoints.length - 1 ? basePoints[0] : basePoints[i+1]; // 如果是最后一个顶点，则与第一个顶点连边
+            CcVector p1 = basePoints[i];
+            CcVector p2 = i == basePoints.length - 1 ? basePoints[0] : basePoints[i+1]; // 如果是最后一个顶点，则与第一个顶点连边
             edges[i] = p2.minus(p1);  // 两点相减得到边
             normals[i] = edges[i].perp().normalize(); // 正则化
         }
@@ -45,7 +51,7 @@ public class Polygon {
     public double[][] outerBoundingBox() {
 
         double xMin = Double.MAX_VALUE, xMax = Double.MIN_VALUE, yMin = Double.MAX_VALUE, yMax = Double.MIN_VALUE;
-        for (Vector point : basePoints) {
+        for (CcVector point : basePoints) {
             xMin = Math.min(point.x, xMin);
             yMin = Math.min(point.y, yMin);
             xMax = Math.max(point.x, xMax);
