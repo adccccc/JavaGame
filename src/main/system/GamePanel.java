@@ -12,13 +12,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     // 全局单例
     public static final GamePanel instance = new GamePanel();
-    // 画面设置
-    public final int originalTileSize = 16; // 16x16 tile
-    public final int scale = 2;
 
-    public final int tileSize = originalTileSize * scale; // 32 * 32;
-    public final int maxScreenCol = 25;
-    public final int maxScreenRow = 20;
+    // 画面设置
+    public final int tileSize = Constant.TILE_SIZE; // 32px 的地砖;
+    public final int maxScreenCol = 25, maxScreenRow = 20;
     public final int screenWidth = tileSize * maxScreenCol; // 800 pixels
     public final int screenHeight = tileSize * maxScreenRow; // 640 pixels
 
@@ -32,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int playerInitX = 0, playerInitY = 0; // 小黑子的初始坐标, 保存在每关的物品配置的第一行
 
-    // SYSTEM
+    // 系统组件
     public UI ui = new UI(this);
     public TileManager tileManager = new TileManager(this);
     public GameObjectManager gameObjectManager = new GameObjectManager(this);
@@ -40,7 +37,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Sound sound = new Sound();
     Thread gameThread;
 
-    // ENTITY
+    // 角色
     public Player player = new Player(this, keyHandler);
 
     private GamePanel() {
@@ -73,9 +70,10 @@ public class GamePanel extends JPanel implements Runnable {
         sound.changeBgm(sound.gameBgm);
         try {
             resetLevel(true);
-        } catch (Exception e) {} // do nothing
+        } catch (Exception ignored) {} // do nothing
     }
 
+    // 暂停状态切换
     public void changePause() {this.gameState = this.gameState == PAUSE_STATE ? PLAY_STATE : PAUSE_STATE;}
 
     public void nextLevel() {
@@ -132,26 +130,34 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
+     * 重新计算所有物体与角色
      * 先计算物体，再计算角色
      */
     public void update() {
+
         if (gameState == PLAY_STATE) {
             gameObjectManager.update();
             player.update();
         }
     }
 
+    /**
+     * 重新绘制所有内容
+     * 背景层 -> 物体层 -> 角色层 -> UI层
+     */
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if (gameState == TITLE_STATE) { } // 标题栏不画场景
-        else {
+
+        if (gameState != TITLE_STATE) { // 标题栏不画游戏场景
+
             tileManager.draw(g2); // 背景层
             gameObjectManager.draw(g2); // 物品层
             player.draw(g2); // 人物
         }
-        ui.draw(g2);
+
+        ui.draw(g2); // UI
         g2.dispose();
     }
 

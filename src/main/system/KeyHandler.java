@@ -14,14 +14,19 @@ public class KeyHandler implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
 
+        // 角色控制
         if (gp.gameState == gp.TITLE_STATE) titleStateKeyPressed(e);
+        // 回车开始游戏
         if (gp.gameState == gp.PLAY_STATE) playStateKeyPressed(e, true);
+        // 按P暂停
         if (gp.gameState == gp.PAUSE_STATE || gp.gameState == gp.PLAY_STATE) pauseStateKeyPressed(e);
+        // 按R重置
         if ((gp.gameState == gp.FAILED_STATE || gp.gameState == gp.PLAY_STATE) && e.getKeyCode() == KeyEvent.VK_R) {
             gp.gameState = gp.PLAY_STATE;
             gp.resetLevel(false);
         }
-        if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute(); // 音量开关
+        // 开关音效
+        if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute();
     }
 
     public void keyReleased(KeyEvent e) { playStateKeyPressed(e, false); }
@@ -29,8 +34,8 @@ public class KeyHandler implements KeyListener {
     private void titleStateKeyPressed(KeyEvent e) {
 
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) gp.ui.currentCommand = ++gp.ui.currentCommand > gp.ui.COMMAND_MAX_NUM ? 1 : gp.ui.currentCommand;
-        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) gp.ui.currentCommand = --gp.ui.currentCommand < 1 ? gp.ui.COMMAND_MAX_NUM : gp.ui.currentCommand;
+        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) gp.ui.currentCommand = (++gp.ui.currentCommand > gp.ui.COMMAND_MAX_NUM ? 1 : gp.ui.currentCommand);
+        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) gp.ui.currentCommand = (--gp.ui.currentCommand < 1 ? gp.ui.COMMAND_MAX_NUM : gp.ui.currentCommand);
         if (code == KeyEvent.VK_ENTER && gp.ui.currentCommand == 1) gp.startGame();
         if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_A) {
             if (gp.ui.currentCommand == 2) gp.currentLevel = --gp.currentLevel < 1 ? gp.TOTAL_LEVEL : gp.currentLevel;
@@ -55,6 +60,7 @@ public class KeyHandler implements KeyListener {
             rightReleased = !pressed;
             gp.player.turnLeft = false;
         }
+
         if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) {
             jumpPressed = pressed;
             jumpReleased = !pressed;

@@ -24,9 +24,9 @@ public class UI {
         this.g2 = g2;
         g2.setFont(ariel40);
         g2.setColor(Color.ORANGE);
-        if (gp.gameState == gp.TITLE_STATE) { drawTitleScreen(); }
-        if (gp.gameState == gp.PLAY_STATE) { drawPlayScreen(); }
-        if (gp.gameState == gp.PAUSE_STATE) { drawPauseScreen(); }
+        if (gp.gameState == gp.TITLE_STATE) drawTitleScreen();
+        if (gp.gameState == gp.PLAY_STATE)  drawPlayScreen();
+        if (gp.gameState == gp.PAUSE_STATE)  drawPauseScreen();
         if (gp.gameState == gp.FAILED_STATE) drawFailedScreen();
     }
 
@@ -74,7 +74,7 @@ public class UI {
 
         // 操作说明
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
-        drawTextAtCenter("操作说明: 方向键/WASD-移动 空格/SHIFT-跳跃 P-暂停 R-重置 M-音效", 600, Color.CYAN);
+        drawTextAtCenter("操作说明: 左右方向/AD-移动 空格/SHIFT-跳跃 P-暂停 R-重置 M-音效", 600, Color.CYAN);
     }
 
     public void drawPauseScreen() {

@@ -14,19 +14,18 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class GameObjectManager {
 
     public GamePanel gp;
-    public GameObject[] objectLibrary; // 游戏物体类型库,通过下标来获取物品
-    public List<GameObject> objectList; // 当前存在的物体列表
+    public GameObject[] objectLibrary = new GameObject[100]; // 游戏物体类型库,通过下标来获取物品
+    public LinkedList<GameObject> objectList = new LinkedList<>(), waitToAddList = new LinkedList<>(); // 当前存在的物体链表
 
     public GameObjectManager(GamePanel gp) {
 
         this.gp = gp;
-        this.objectLibrary = new GameObject[100];
-        objectList = new LinkedList<>(); // 用链表,删除速度快
         try {
             loadLibrary(); // 加载物品库
         } catch (Exception e) {}
@@ -36,6 +35,7 @@ public class GameObjectManager {
 
     private void loadLibrary() throws IOException {
 
+        // 初始化游戏所有物体
         Polygon triangleUp = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
         Polygon triangleDown = new Polygon(new Vector(0, 0), new Vector(Constant.TILE_SIZE-1, 0), new Vector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
         Polygon triangleLeft = new Polygon(new Vector(0, Constant.TILE_SIZE-1), new Vector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new Vector((Constant.TILE_SIZE-1) / 2.0, 0));
@@ -67,8 +67,8 @@ public class GameObjectManager {
     public void reloadGameObject(int level) throws IOException {
 
         objectList.clear(); // 先清除物体列表
-        loadGameObjectFromTextConfig(level); // 从文本配置中加载
-        loadGameObjectFromCsv(level); // 从csv表格中加载
+        loadGameObjectFromTextConfig(level); // 从文本配置中加载独立配置的物体
+        loadGameObjectFromCsv(level); // 从csv表格中加载批量物体
     }
 
     /**
@@ -163,19 +163,25 @@ public class GameObjectManager {
     public void update() {
 
         gp.player.onPlatform = false; // 重置角色的平台状态
-        List<GameObject> copyList = new ArrayList<>(objectList); // 这里复制一份再遍历，避免并发修改
-        for (GameObject obj : copyList) {
+        for (GameObject obj : objectList) {
             obj.checkAndExecuteAction(); // 执行物体动作
             obj.reCalcSpeed(); // 重新计算物体速度
-            CollisionChecker.checkGameObject(gp.player, obj); // 检查碰撞
+            CollisionChecker.checkGameObject(gp.player, obj); // 检查角色和物体间的碰撞
             obj.reCalcLocation(); // 重新计算物体位置
         }
 
+        waitToAddList.forEach(newObj -> objectList.addFirst(newObj)); // 新增物体前插到物体
+        waitToAddList.clear();
         objectList.removeIf(this::checkObjectOffMap); // 移除失效物体
     }
 
     // 画出所有物体
-    public void draw(Graphics2D g2) { for (GameObject obj : objectList) obj.draw(g2); }
+    public void draw(Graphics2D g2) {
+
+        // 由于此方法是系统调用，跟游戏线程不一致，因此需要先复制，避免并发修改异常
+        List<GameObject> copiedList = new ArrayList<>(objectList);
+        for (GameObject obj : copiedList) obj.draw(g2);
+    }
 
     // 检查物体是否出屏幕
     private boolean checkObjectOffMap(Entity object) { return object.removed = object.removed || object.x < -100 || object.x > gp.screenWidth + 100 || object.y < -100 || object.y > gp.screenHeight; }

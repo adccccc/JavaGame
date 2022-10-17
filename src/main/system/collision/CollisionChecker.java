@@ -124,6 +124,7 @@ public class CollisionChecker {
         Vector[] bPoints = b.basePoints;
         for (Vector n : a.normals) if (isSeparatingAxis(aPoints, bPoints, n)) return false;
         for (Vector n : b.normals) if (isSeparatingAxis(aPoints, bPoints, n)) return false;
+
         return true;
     }
 

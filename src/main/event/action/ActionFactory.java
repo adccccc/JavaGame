@@ -64,21 +64,30 @@ public class ActionFactory {
         public void execute(GameObject gameObject) {
 
             if (timer % 50 == 0) {
-                for (int i = 0; i < 60; i++) {
+
+                for (int i = 0; i < 30; i++) {
                     GameObject obj = GamePanel.instance.gameObjectManager.objectLibrary[4].clone();
                     obj.x = 400;
-                    obj.y = 300;
-                    obj.vSpeed = Math.cos(i * (6 + timer / 50));
-                    obj.hSpeed = Math.sin(i * (6 + timer / 50));
-                    GamePanel.instance.gameObjectManager.objectList.add(obj);
+                    obj.y = 50 + timer / 2.0;
+                    double theta = i * 12 * Math.PI / 180;
+                    obj.vSpeed = (1 + Math.cos(theta)) * Math.cos(theta) * 0.8;
+                    obj.hSpeed = (1 + Math.cos(theta)) * Math.sin(theta) * 0.6;
+                    GamePanel.instance.gameObjectManager.waitToAddList.add(obj);
                 }
             }
+
+//            GameObject obj = GamePanel.instance.gameObjectManager.objectLibrary[4].clone();
+//            obj.x = 400;
+//            obj.y = 300;
+//            obj.vSpeed = Math.cos(timer / 15.0 * Math.PI) * 1.5;
+//            obj.hSpeed = Math.sin(timer / 15.0 * Math.PI) * 1.5;
+//            GamePanel.instance.gameObjectManager.waitToAddList.add(obj);
         }
 
         @Override
         public boolean finished() {
 
-            return ++timer > 150;
+            return ++timer > 300;
         }
     }
 

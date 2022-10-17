@@ -21,7 +21,7 @@ public class Player extends Entity {
     boolean invincible = false; // 是否受伤后无敌状态
     int invincibleFrameCount = 0; // 无敌帧计数
     final int MAX_INVINCIBLE_FRAME = 50; // 无敌帧总长度
-    public DynamicImage standImg, runImg, jumpImg, downImg, invincibleImg; // 动态图
+    public DynamicImage standImg, runImg, jumpImg, downImg, invincibleImg; // 角色动态图
 
     double jump1Speed = 8.5, jump2Speed = 7.0; // 一段大跳,二段小跳
     double jumpReleaseCoefficient = 0.45; // 跳跃键释放后的上升速度系数
@@ -49,7 +49,7 @@ public class Player extends Entity {
         hSpeed = 3;
         vSpeed = 0;
         hp = (gp.MAX_DIFFICULTY - gp.difficulty + 1) * 2 - 1; // 初始生命值与难度的关联公式
-        solidRect = new Rectangle(8, 8, 16, 23); // 人物碰撞区域
+        solidRect = new Rectangle(8, 10, 16, 21); // 人物碰撞区域
     }
 
     public void loadPlayerImage() {
@@ -91,31 +91,32 @@ public class Player extends Entity {
         }
 
         leftCollisionOn = rightCollisionOn = false;
-        try {
+        try { // 避免地图外碰撞时的数组越界错误
             CollisionChecker.checkTile(this, this.gp.tileManager);
-        } catch (Exception e) {} // 避免地图外异常
-        if (!leftCollisionOn) {
+        } catch (Exception ignored) {}
+
+        if (!leftCollisionOn) { // 左边能走
             if (keyHandler.leftPressed) x -= hSpeed;
             if (platformXDisplacement < 0) x += platformXDisplacement; // 跟板移动
         }
-        if (!rightCollisionOn) {
+        if (!rightCollisionOn) { // 右边能走
             if (keyHandler.rightPressed) x += hSpeed;
             if (platformXDisplacement > 0) x += platformXDisplacement; // 跟板移动
         }
-        platformXDisplacement = 0; // 重置
+        platformXDisplacement = 0; // 重置平板移动距离
 
         if (landed || onPlatform) {
             jumpCount = 0; // 落地重置跳跃次数
             canJump = !keyHandler.jumpPressed; // 落地后要松开跳跃键才能重置跳跃
         }
 
-        if (vSpeed < 0 && !keyHandler.jumpPressed) // 释放跳跃键后，向上时的速度 * 系数
+        if (vSpeed < 0 && !keyHandler.jumpPressed) // 释放跳跃键后减速：向上时的速度需要 * 系数
             vSpeed *= jumpReleaseCoefficient;
         vSpeed += Constant.G; // 先减速,再移动
         y += vSpeed + platformYDisplacement; // 随板移动
         platformYDisplacement = 0; // 重置
 
-        if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { // 无敌时间
+        if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { // 受伤后的无敌时间
             invincible = false;
             invincibleFrameCount = 0;
         }
@@ -144,15 +145,14 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2) {
 
-        // 根据人物状态确定展示哪个形态
-        // 重力影响下的第一帧不算下落
+        // 根据人物状态确定动图
         if (landed || onPlatform)
             img = (keyHandler.leftPressed || keyHandler.rightPressed) ? runImg : standImg;
         else
             img = vSpeed < 0 ? jumpImg : downImg;
 
         super.draw(g2);
-        if (invincible) // 加一层无敌特效
+        if (invincible) // 加一层受伤特效
             g2.drawImage(invincibleImg.getImg(), (int)x, (int)y, width, height, null );
     }
 }

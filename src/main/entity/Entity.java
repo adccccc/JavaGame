@@ -9,7 +9,7 @@ import main.tool.UtilityTool;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Entity implements Cloneable {
+public class Entity {
 
     public DynamicImage img; // 贴片图
     public double x = 0.0, y = 0.0; // 全局坐标 (左上角为0,0)
@@ -25,7 +25,7 @@ public class Entity implements Cloneable {
     // 物体形状 0-多边形 1-圆形
     public int shape = 0;
 
-    //凸多边形端点列表，两两相连，围成物体的撞检测区域
+    // 凸多边形端点列表，两两相连，围成物体的撞检测区域
     // 端点坐标为物体坐标(左上角)的相对坐标，一般情况均为正数
     public Polygon collisionPoly;
     // 圆形碰撞半径
@@ -50,7 +50,6 @@ public class Entity implements Cloneable {
 
     // 计算缩放后的绘画起点位置 (中心缩放)
     public Vector getScreenStartPos() {return new Vector(x + width / 2.0 * (1 - scale),  y + height / 2.0 * (1 - scale));}
-
 
     // ----- 物体运动相关 ------
 

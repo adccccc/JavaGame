@@ -2,12 +2,6 @@ package main.entity;
 
 import main.event.action.Action;
 import main.event.effect.CollisionEffect;
-import main.system.collision.shape.Circle;
-import main.system.collision.shape.Polygon;
-import main.system.collision.shape.Vector;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;

@@ -44,6 +44,7 @@ public class Sound {
     public void playEffect(Clip clip) {
 
         if (muted) return;
+
         clip.setFramePosition(0);
         clip.start();
     }
@@ -60,7 +61,7 @@ public class Sound {
 
     public void changeMute() {
 
-        if (muted = !muted) pauseBgm(); // 省一行
+        if (muted = !muted) pauseBgm();
         else resumeBgm();
     }
 
