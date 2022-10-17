@@ -12,6 +12,7 @@ public class UI {
     DecimalFormat dFormat = new DecimalFormat("#00.00");
     public int currentCommand = 1;
     public final int COMMAND_MAX_NUM = 4;
+    public boolean showPos = false;
 
     public UI (GamePanel gp) {
 
@@ -29,6 +30,22 @@ public class UI {
         if (gp.gameState == gp.PAUSE_STATE)  drawPauseScreen();
         if (gp.gameState == gp.FAILED_STATE) drawFailedScreen();
         if (gp.gameState == gp.SUCCESS_STATE) drawSucceedScreen();
+        drawDebugScreen();
+    }
+
+    // for design
+    private void drawDebugScreen() {
+
+        if (showPos) {
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 12F));
+            for (int i = 0; i < 25; i++) {
+                drawText(new DecimalFormat("#000").format(i * 32), i * 32 , 24, Color.BLUE);
+            }
+            for (int i = 0; i < 20; i++) {
+                drawText(i * 32 + "", 16, i * 32, Color.BLUE);
+            }
+        }
+
     }
 
     private void drawSucceedScreen() {

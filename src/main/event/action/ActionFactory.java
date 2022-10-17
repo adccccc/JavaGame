@@ -54,22 +54,25 @@ public class ActionFactory {
      */
     public static class TimerMoveAction extends SpeedChangeAction {
 
-        public int moveTime = -1;
+        public int moveTime;
         private int timer = 0;
 
         public TimerMoveAction(GameObject gameObject, String actionParam) {
 
             super(gameObject, actionParam);
+            moveTime = Integer.parseInt(actionParam.split(",")[4]);
         }
 
         // 移动一定时间
         public void execute(GameObject gameObject) {
 
-            if (timer++ > moveTime) gameObject.stopMoving();
+            if (++timer > moveTime) gameObject.stopMoving();
             else super.execute(gameObject);
         }
 
-        public boolean finished() {return timer > moveTime; }
+        public boolean finished() {
+            return timer > moveTime;
+        }
     }
 
     /**

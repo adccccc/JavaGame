@@ -125,7 +125,7 @@ public class Player extends Entity {
     public void gotHurt() {
 
         if (invincible) return;// 无敌时免疫伤害
-        if (--hp > 0) { // 受伤
+        if (hp > 0) { // 受伤
             invincible = true; // 无敌
             gp.sound.playEffect(gp.sound.hurt);
         } else dead(); // 死亡

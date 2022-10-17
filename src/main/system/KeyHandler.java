@@ -27,6 +27,7 @@ public class KeyHandler implements KeyListener {
         }
         // 开关音效
         if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute();
+        if (e.getKeyCode() == KeyEvent.VK_B) gp.ui.showPos = !gp.ui.showPos;
     }
 
     public void keyReleased(KeyEvent e) { playStateKeyPressed(e, false); }

@@ -23,8 +23,8 @@ public class TileManager {
     public void getTileImage() {
 
         setup(1, "Green", false);
-        setup(2, "wall_32", true);
-        setup(3, "wall_plat", true);
+        setup(2, "wall_stone", true);
+        setup(3, "wall_stone", true);
     }
 
     public void setup(int index, String imageName, boolean collision) {

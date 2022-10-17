@@ -47,6 +47,8 @@ public class GameObjectManager {
         setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet1.png", "bullet2.png");
         setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet_heart.png");
         setup(13,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, 3, "bullet_blue_0.png","bullet_blue_1.png");
+        setup(14,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, 1, "wall_stone.png"); // 掩体
+        setup(15,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, 1, "wall_stone.png"); // 掩体
     }
 
     private void setup(int index, int width, int height, int shape, CcPolygon poly, double collisionRadius, CollisionEffect effect, int imgFrame, String... imgNames) throws IOException {
@@ -132,7 +134,7 @@ public class GameObjectManager {
                     gp.playerInitX = Integer.parseInt(pos[0]);
                     gp.playerInitY = Integer.parseInt(pos[1]);
                 }
-            } else {
+            } else if (!line.startsWith("#")){
                 String[] prop = line.split("=");
                 propMap.put(prop[0].trim(), prop[1].trim());
             }
