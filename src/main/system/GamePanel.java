@@ -23,6 +23,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int MAX_DIFFICULTY = 3; // 总难度级别
     public final int TITLE_STATE = 0, PLAY_STATE = 1, PAUSE_STATE =  2, FAILED_STATE = 3, SUCCESS_STATE = 4;
     public int gameState = TITLE_STATE; // 当前游戏状态
+    public boolean endLoopFlag = false; // 结束当前帧update的标记，通关后触发
 
     public int playerInitX = 0, playerInitY = 0; // 小黑子的初始坐标, 保存在每关的物品配置的第一行
 
@@ -54,7 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
 
         // 加载地图
-        resetLevel(true);
+        // resetLevel(true);
         sound.changeBgm(sound.titleBgm);
         // 游戏线程启动
         (gameThread = new Thread(this)).start();
@@ -93,6 +94,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void resetLevel(boolean reloadMap){
 
         try {
+            endLoopFlag = true; // 结束上一轮的update
             gameObjectManager.reloadGameObject(this.currentLevel); // 重新加载游戏物体
             if (reloadMap) tileManager.loadMap(this.currentLevel); // 跳关时加载地图
             player.resetProperties(); // 重置人物属性

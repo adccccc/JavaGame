@@ -37,13 +37,13 @@ public class GameObjectManager {
         CcPolygon triangleDown = new CcPolygon(new CcVector(0, 0), new CcVector(Constant.TILE_SIZE-1, 0), new CcVector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
         CcPolygon triangleLeft = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
         CcPolygon triangleRight = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
-        setup(4, Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER, 1, "spike_up.png");
-        setup(5,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER, 1, "spike_down.png");
-        setup(6,  Constant.TILE_SIZE, Constant.TILE_SIZE,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER, 1, "spike_left.png");
-        setup(7,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, 1, "spike_right.png");
-        setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, 1, "next_level.png");
-        setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, new CcPolygon(Constant.TILE_SIZE, 12), 0, CollisionEffect.PLATFORM, 1, "platform3.png");
-        setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, 1, "save_point.png");
+        setup(4,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, new CcPolygon(Constant.TILE_SIZE, 12), 0, CollisionEffect.PLATFORM, 1, "platform3.png");
+        setup(5, Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER, 1, "spike_up.png");
+        setup(6,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER, 1, "spike_down.png");
+        setup(7,  Constant.TILE_SIZE, Constant.TILE_SIZE,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER, 1, "spike_left.png");
+        setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, 1, "spike_right.png");
+        setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, 1, "save_point.png");
+        setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, 1, "next_level.png");
         setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet1.png", "bullet2.png");
         setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet_heart.png");
         setup(13,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, 3, "bullet_blue_0.png","bullet_blue_1.png");
@@ -172,6 +172,10 @@ public class GameObjectManager {
 
         gp.player.onPlatform = false; // 重置角色的平台状态
         for (GameObject obj : objectList) {
+            if (gp.endLoopFlag) { // 当前关卡结束，不再更新
+                gp.endLoopFlag = false;
+                break;
+            }
             obj.checkAndExecuteAction(); // 执行物体动作
             obj.reCalcSpeed(); // 重新计算物体速度
             CollisionChecker.checkGameObject(gp.player, obj); // 检查角色和物体间的碰撞
