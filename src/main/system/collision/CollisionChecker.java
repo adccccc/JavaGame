@@ -72,7 +72,8 @@ public class CollisionChecker {
     public static void checkGameObject(Player player, GameObject gameObject) {
 
         // 物体的矩形边界转换成多边形
-        CcPolygon absoluteSolidArea = new CcPolygon(player.solidRect.width, player.solidRect.height).plusOffset(player.pos.plus(new CcVector(player.solidRect.x, player.solidRect.y)));
+        CcPolygon absoluteSolidArea = new CcPolygon(player.solidRect.width, player.solidRect.height);
+        absoluteSolidArea = new CcPolygon(absoluteSolidArea, player.pos.plus(new CcVector(player.solidRect.x, player.solidRect.y)));
 
         if (gameObject.shape == 0 && polygonsCollide(absoluteSolidArea, new CcPolygon(gameObject.getCollisionPolyForNull(), gameObject.getScreenStartPos())))
             gameObject.onCollision(player);

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameObjectManager {
@@ -37,21 +38,27 @@ public class GameObjectManager {
         CcPolygon triangleDown = new CcPolygon(new CcVector(0, 0), new CcVector(Constant.TILE_SIZE-1, 0), new CcVector((Constant.TILE_SIZE-1) / 2.0, Constant.TILE_SIZE - 1));
         CcPolygon triangleLeft = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
         CcPolygon triangleRight = new CcPolygon(new CcVector(0, Constant.TILE_SIZE-1), new CcVector(Constant.TILE_SIZE-1, Constant.TILE_SIZE-1), new CcVector((Constant.TILE_SIZE-1) / 2.0, 0));
-        setup(4,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, new CcPolygon(Constant.TILE_SIZE, 12), 0, CollisionEffect.PLATFORM, 1, "platform3.png");
-        setup(5, Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER, 1, "spike_up.png");
-        setup(6,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER, 1, "spike_down.png");
-        setup(7,  Constant.TILE_SIZE, Constant.TILE_SIZE,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER, 1, "spike_left.png");
-        setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, 1, "spike_right.png");
-        setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, 1, "save_point.png");
-        setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, 1, "next_level.png");
-        setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet1.png", "bullet2.png");
-        setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, 3, "bullet_heart.png");
-        setup(13,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, 3, "bullet_blue_0.png","bullet_blue_1.png");
-        setup(14,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, 1, "wall_stone.png"); // 掩体
-        setup(15,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, 1, "wall_stone.png"); // 掩体
+        setup(4,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, new CcPolygon(Constant.TILE_SIZE, 14), 0, CollisionEffect.PLATFORM, null, 1, "platform3.png");
+        setup(5, Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleUp, 0, CollisionEffect.HURT_PLAYER, null,1, "spike_up.png");
+        setup(6,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, triangleDown, 0, CollisionEffect.HURT_PLAYER, null,1, "spike_down.png");
+        setup(7,  Constant.TILE_SIZE, Constant.TILE_SIZE,  0, triangleLeft, 0, CollisionEffect.HURT_PLAYER, null,1, "spike_left.png");
+        setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, null,1, "spike_right.png");
+        setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, null,1, "save_point.png");
+        setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, null,1, "next_level.png");
+        setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, ActionFactory.getAction(null, "disappear", "600", Action.Trigger.IMMEDIATE), 3, "bullet_fire_1.png", "bullet_fire_2.png");
+        setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, null,3, "bullet_heart.png");
+        setup(13,  32, 32,  1, null, 8, CollisionEffect.HURT_PLAYER, null, 15, "basketball_0.png","basketball_1.png");
+        setup(14,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, null, 1, "wall_stone.png"); // 掩体
+        setup(15,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, null,1, "wall_stone.png"); // 掩体
+        setup(16,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, null,3, "bullet_blue_0.png","bullet_blue_1.png");
+
+        // BOSS展示对象
+        setup(98, 180,180,0,null,0, CollisionEffect.HURT_PLAYER, null, 6, "boss_00.png","boss_01.png","boss_02.png","boss_03.png","boss_04.png","boss_05.png","boss_06.png","boss_07.png","boss_08.png","boss_09.png","boss_10.png","boss_11.png","boss_12.png");
+        // 专用隐形对象
+        setup(99,  1, 1,  1, null, 1, CollisionEffect.NOTHING, null,1, "water.png");
     }
 
-    private void setup(int index, int width, int height, int shape, CcPolygon poly, double collisionRadius, CollisionEffect effect, int imgFrame, String... imgNames) throws IOException {
+    private void setup(int index, int width, int height, int shape, CcPolygon poly, double collisionRadius, CollisionEffect effect, Action action, int imgFrame, String... imgNames) throws IOException {
 
         objectLibrary[index] = new GameObject();
         objectLibrary[index].pos = new CcVector(0,0);
@@ -61,6 +68,7 @@ public class GameObjectManager {
         objectLibrary[index].collisionPoly = poly;
         objectLibrary[index].collisionRadius = collisionRadius;
         objectLibrary[index].collisionEffect = effect == null ? CollisionEffect.NOTHING : effect;
+        if (action != null) objectLibrary[index].actionList.add(action);
     }
 
     // 加载成动图
@@ -133,7 +141,7 @@ public class GameObjectManager {
         while ((line = br.readLine()) != null) {
 
             if (line.isEmpty() && !propMap.isEmpty()) {
-                objectList.add(createGameObjectByPropMap(propMap));
+                objectList.addAll(createGameObjectByPropMap(propMap));
                 propMap.clear();
             } else if (!line.startsWith("#")) { // 配置的注释以#开头
                 String[] prop = line.split("=");
@@ -141,27 +149,35 @@ public class GameObjectManager {
             }
         }
 
-        if (!propMap.isEmpty()) objectList.add(createGameObjectByPropMap(propMap));
+        if (!propMap.isEmpty()) objectList.addAll(createGameObjectByPropMap(propMap));
     }
 
-    public GameObject createGameObjectByPropMap(Map<String, String> propMap) {
+    public List<GameObject> createGameObjectByPropMap(Map<String, String> propMap) {
 
-        // 从物体库中clone一个标准物体
-        GameObject gameObject = objectLibrary[Integer.parseInt(propMap.get("index"))].clone();
-        if (propMap.containsKey("speed")) gameObject.speed = new CcVector(propMap.get("speed"));
-        if (propMap.containsKey("pos")) gameObject.pos = new CcVector(propMap.get("pos"));
-        if (propMap.containsKey("box")) gameObject.pos = new CcVector(propMap.get("box"));
-        if (propMap.containsKey("scale")) gameObject.scale = Double.parseDouble(propMap.get("scale"));
-        if (propMap.containsKey("rotate")) gameObject.rotate = Integer.parseInt(propMap.get("rotate"));
-        if (propMap.containsKey("visible")) gameObject.visible = Boolean.parseBoolean(propMap.get("visible"));
-        if (propMap.containsKey("shape")) gameObject.shape = Integer.parseInt(propMap.get("shape"));
-        // 从配置中加载碰撞体积
-        if (propMap.containsKey("collisionPoly")) gameObject.collisionPoly = new CcPolygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
-        if (propMap.containsKey("collisionRadius")) gameObject.collisionRadius = Double.parseDouble(propMap.get("collisionRadius"));
-        // 从配置中加载动作和触发器，因为文本配置不好管理，故限制只能有一个动作
-        if (propMap.containsKey("actionName")) gameObject.actionList.add(ActionFactory.getAction(gameObject, propMap.get("actionName"), propMap.get("actionParam"), TriggerFactory.getTrigger(gameObject, propMap.get("triggerName"), propMap.get("triggerParam"))));
+        List<GameObject> list = new ArrayList<>();
+        String[] posList = propMap.get("pos").split(";"); // 位置不同的批量物品
+        for (String pos : posList) {
+            // 从物体库中clone一个标准物体
+            GameObject gameObject = objectLibrary[Integer.parseInt(propMap.get("index"))].clone();
+            if (propMap.containsKey("speed")) gameObject.speed = new CcVector(propMap.get("speed"));
+            if (propMap.containsKey("pos")) gameObject.pos = new CcVector(pos);
+            if (propMap.containsKey("box")) gameObject.pos = new CcVector(propMap.get("box"));
+            if (propMap.containsKey("scale")) gameObject.scale = Double.parseDouble(propMap.get("scale"));
+            if (propMap.containsKey("rotate")) gameObject.rotate = Integer.parseInt(propMap.get("rotate"));
+            if (propMap.containsKey("visible")) gameObject.visible = Boolean.parseBoolean(propMap.get("visible"));
+            if (propMap.containsKey("shape")) gameObject.shape = Integer.parseInt(propMap.get("shape"));
+            // 从配置中加载碰撞体积
+            if (propMap.containsKey("collisionPoly"))
+                gameObject.collisionPoly = new CcPolygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
+            if (propMap.containsKey("collisionRadius"))
+                gameObject.collisionRadius = Double.parseDouble(propMap.get("collisionRadius"));
+            // 从配置中加载动作和触发器，因为文本配置不好管理，故限制只能有一个动作
+            if (propMap.containsKey("actionName"))
+                gameObject.actionList.add(ActionFactory.getAction(gameObject, propMap.get("actionName"), propMap.get("actionParam"), TriggerFactory.getTrigger(gameObject, propMap.get("triggerName"), propMap.get("triggerParam"))));
 
-        return gameObject;
+            list.add(gameObject);
+        }
+        return list;
     }
 
     // ---------------------------------- 游戏物体状态更新 -----------------------------------------

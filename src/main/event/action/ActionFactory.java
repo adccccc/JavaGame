@@ -13,6 +13,7 @@ public class ActionFactory {
 
         Action action = null;
         try {
+            if ("disappear".equals(actionName)) action = new DisappearAction(gameObject, actionParam);
             if ("speedChange".equals(actionName)) action = new SpeedChangeAction(gameObject, actionParam);
             if ("timerMove".equals(actionName)) action = new TimerMoveAction(gameObject, actionParam);
             if ("wander".equals(actionName)) action = new WanderAction(gameObject, actionParam);
@@ -27,6 +28,18 @@ public class ActionFactory {
     }
 
     // ------------------- 下面是各Action实现类 -------------------------
+
+    /**
+     * 定时移除
+     */
+    public static class DisappearAction extends Action {
+
+        public int lifeTime;
+
+        public DisappearAction(GameObject gameObject, String actionParam) {lifeTime = Integer.parseInt(actionParam);}
+
+        protected void execute(GameObject gameObject) { if (gameObject.surviveTime > lifeTime) gameObject.removed = true; }
+    }
 
     /**
      * 修改物体速度

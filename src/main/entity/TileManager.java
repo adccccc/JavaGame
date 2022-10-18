@@ -24,7 +24,9 @@ public class TileManager {
 
         setup(1, "Green", false);
         setup(2, "wall_stone", true);
-        setup(3, "wall_stone", true);
+        setup(3, "wall_32", true);
+        setup(4, "black2", false);
+        setup(5, "wall_plat", true);
     }
 
     public void setup(int index, String imageName, boolean collision) {
@@ -33,7 +35,9 @@ public class TileManager {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
             tile[index].collision = collision;
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
     }
 
     public void loadMap(int level) {

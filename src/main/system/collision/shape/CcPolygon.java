@@ -47,16 +47,6 @@ public class CcPolygon {
         }
     }
 
-
-    // 矩形 + 向量
-    public CcPolygon plusOffset(CcVector offset) {
-
-        CcVector[] newPoints = this.basePoints.clone();
-        for (CcVector point : newPoints) point = point.plus(offset);
-
-        return new CcPolygon(newPoints);
-    }
-
     // 计算多边形的外包围框坐标
     public double[][] outerBoundingBox() {
 

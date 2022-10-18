@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // 游戏状态
     public int currentLevel = 1, startLevel = 1; // 当前关卡和起始关卡
-    public final int TOTAL_LEVEL = 10; // 总关卡数目
+    public final int TOTAL_LEVEL = 6; // 总关卡数目
     public int difficulty = 3; // 当前游戏难度
     public final int MAX_DIFFICULTY = 3; // 总难度级别
     public final int TITLE_STATE = 0, PLAY_STATE = 1, PAUSE_STATE =  2, FAILED_STATE = 3, SUCCESS_STATE = 4;
@@ -76,10 +76,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void nextLevel() {
 
         // TODO 这里可以做过关特效
-        currentLevel++;
+        sound.playEffect(sound.nextLevel); // 通关语音
+        ++currentLevel;
         playerInitPos = new CcVector(0, 0); // 上一关的重生坐标清除，重新加载
         resetLevel();
-        sound.playEffect(sound.nextLevel); // 通关语音
     }
 
     // 通关
@@ -97,6 +97,7 @@ public class GamePanel extends JPanel implements Runnable {
             gameObjectManager.reloadGameObject(this.currentLevel); // 重新加载游戏物体
             tileManager.loadMap(this.currentLevel); // 跳关时加载地图
             player.resetProperties(); // 重置人物属性
+            if (currentLevel == TOTAL_LEVEL) sound.changeBgm(sound.bossBgm); // 进BOSS换音效
         } catch (Exception e) {
             e.printStackTrace();
         }

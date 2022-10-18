@@ -56,6 +56,8 @@ public class Sound {
 
     public void changeBgm(Sequencer sequencer) {
 
+        if (sequencer == currentBgm) return;
+
         currentBgm.stop();
         bgmPosition = 0;
         currentBgm = sequencer;
