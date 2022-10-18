@@ -1,6 +1,7 @@
 package main.system;
 
 import main.entity.*;
+import main.system.collision.shape.CcVector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int TITLE_STATE = 0, PLAY_STATE = 1, PAUSE_STATE =  2, FAILED_STATE = 3, SUCCESS_STATE = 4;
     public int gameState = TITLE_STATE; // 当前游戏状态
     public boolean endLoopFlag = false; // 结束当前帧update的标记，通关后触发
-
-    public int playerInitX = 0, playerInitY = 0; // 小黑子的初始坐标, 保存在每关的物品配置的第一行
+    public CcVector playerInitPos = new CcVector(0, 0); // 小黑子的初始坐标，保存在每关配置文件第一行
 
     // 系统组件
     public UI ui = new UI(this);
@@ -63,12 +63,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGame() {
 
-        gameState = PLAY_STATE;
         startLevel = currentLevel; // 记录从哪关开始玩的
         sound.changeBgm(sound.gameBgm);
-        try {
-            resetLevel(true);
-        } catch (Exception ignored) {} // do nothing
+        resetLevel();
+
+        gameState = PLAY_STATE;
     }
 
     // 暂停状态切换
@@ -78,8 +77,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         // TODO 这里可以做过关特效
         currentLevel++;
-        playerInitX = playerInitY = 0; // 清除起始位置
-        resetLevel(true);
+        playerInitPos = new CcVector(0, 0); // 上一关的重生坐标清除，重新加载
+        resetLevel();
         sound.playEffect(sound.nextLevel); // 通关语音
     }
 
@@ -91,12 +90,12 @@ public class GamePanel extends JPanel implements Runnable {
      * 加载地图
      * 新关卡 / 死亡重置时使用
      */
-    public void resetLevel(boolean reloadMap){
+    public void resetLevel(){
 
         try {
             endLoopFlag = true; // 结束上一轮的update
             gameObjectManager.reloadGameObject(this.currentLevel); // 重新加载游戏物体
-            if (reloadMap) tileManager.loadMap(this.currentLevel); // 跳关时加载地图
+            tileManager.loadMap(this.currentLevel); // 跳关时加载地图
             player.resetProperties(); // 重置人物属性
         } catch (Exception e) {
             e.printStackTrace();

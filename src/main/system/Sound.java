@@ -7,10 +7,13 @@ import java.util.Objects;
 
 public class Sound {
 
+    // 动作音效
     public Clip jump, hurt, dead, nextLevel, music;
-    public Sequencer titleBgm, gameBgm, bossBgm;
-    public Sequencer currentBgm;
+    // 背景音乐
+    public Sequencer titleBgm, gameBgm, bossBgm, currentBgm;
+    // 静音
     boolean muted;
+    // 背景音乐播放位置记录
     long bgmPosition = 0;
 
     public Sound() {
@@ -59,17 +62,9 @@ public class Sound {
         playBgm();
     }
 
-    public void changeMute() {
+    public void changeMute() {if (muted = !muted) pauseBgm(); else resumeBgm();}
 
-        if (muted = !muted) pauseBgm();
-        else resumeBgm();
-    }
-
-    public void pauseBgm() {
-
-        bgmPosition = currentBgm.getMicrosecondPosition();
-        currentBgm.stop();
-    }
+    public void pauseBgm() { bgmPosition = currentBgm.getMicrosecondPosition(); currentBgm.stop();}
 
     public void resumeBgm() {
 

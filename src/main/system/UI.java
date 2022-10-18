@@ -38,14 +38,9 @@ public class UI {
 
         if (showPos) {
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 12F));
-            for (int i = 0; i < 25; i++) {
-                drawText(new DecimalFormat("#000").format(i * 32), i * 32 , 24, Color.BLUE);
-            }
-            for (int i = 0; i < 20; i++) {
-                drawText(i * 32 + "", 16, i * 32, Color.BLUE);
-            }
+            for (int i = 0; i < 25; i++) { drawText(new DecimalFormat("#000").format(i * 32), i * 32 , 24, Color.BLUE);}
+            for (int i = 0; i < 20; i++) { drawText(i * 32 + "", 16, i * 32, Color.BLUE);}
         }
-
     }
 
     private void drawSucceedScreen() {

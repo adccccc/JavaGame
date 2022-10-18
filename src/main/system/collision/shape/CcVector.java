@@ -4,7 +4,14 @@ package main.system.collision.shape;
 public class CcVector implements Cloneable{
 
     public double x, y;
+
+    // -----------------------初始化-----------------------
     public CcVector(double x, double y) {this.x = x; this.y = y;}
+    public CcVector(CcVector o) {this.x = o.x; this.y = o.y;}
+    public CcVector(String param) {
+        this.x = Double.parseDouble(param.split(",")[0]);
+        this.y = Double.parseDouble(param.split(",")[1]);
+    }
 
     // ------------------- 一些向量算法 --------------------
     public CcVector perp() {return new CcVector(0+this.y, -this.x);}

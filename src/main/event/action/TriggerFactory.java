@@ -13,6 +13,7 @@ public class TriggerFactory {
     public static Action.Trigger getTrigger(GameObject gameObject, String triggerName, String triggerParam) {
 
         if ("box".equals(triggerName)) return new BoxTrigger(triggerParam);
+        if ("surviveTime".equals(triggerName)) return new TimerTrigger(triggerParam);
 
         return Action.Trigger.IMMEDIATE;
     }
@@ -31,6 +32,19 @@ public class TriggerFactory {
             box = new Rectangle(Integer.parseInt(boxArr[0]), Integer.parseInt(boxArr[1]), Integer.parseInt(boxArr[2]), Integer.parseInt(boxArr[3]));
         }
 
-        public boolean isTriggered(GameObject gameObject) { return box.contains(GamePanel.instance.player.x + 16, GamePanel.instance.player.y + 16); }
+        public boolean isTriggered(GameObject gameObject) { return box.contains(GamePanel.instance.player.pos.x + 16, GamePanel.instance.player.pos.y + 16); }
+    }
+
+    /**
+     * 检测对象存活的时间(帧数)
+     * 当达到目标值时触发
+     */
+    public static class TimerTrigger implements Action.Trigger {
+
+        private Integer surviveTime;
+
+        private TimerTrigger(String triggerParam) {surviveTime = Integer.parseInt(triggerParam);}
+
+        public boolean isTriggered(GameObject gameObject) { return gameObject.surviveTime >= surviveTime;}
     }
 }

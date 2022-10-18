@@ -2,6 +2,7 @@ package main.entity;
 
 import main.system.*;
 import main.system.collision.CollisionChecker;
+import main.system.collision.shape.CcVector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class Player extends Entity {
     public Rectangle solidRect; // 角色的实际碰撞区域
     public boolean landed = false, onPlatform = false; // 踩在地面上与平台上
     public boolean leftCollisionOn, rightCollisionOn = false; // 是否产生碰撞
-    public double platformXDisplacement, platformYDisplacement = 0.0; // 跟随平板的位移距离
+    public CcVector platformSpeed = new CcVector(0, 0); // 踩着的平板的跟随位移
     public int retryNum = 0; // 失败总次数
 
     public Player(GamePanel gp, KeyHandler keyH) {
@@ -39,12 +40,9 @@ public class Player extends Entity {
 
     public void resetProperties() {
 
-        x = gp.playerInitX;
-        y = gp.playerInitY;
-        width = 32;
-        height = 32;
-        hSpeed = 3;
-        vSpeed = 0;
+        pos = new CcVector(gp.playerInitPos);
+        box = new CcVector(32, 32);
+        speed = new CcVector(3, 0);
         hp = (gp.MAX_DIFFICULTY - gp.difficulty + 1) * 2 - 1; // 初始生命值与难度的关联公式
         solidRect = new Rectangle(8, 10, 16, 21); // 人物碰撞区域
     }
@@ -77,7 +75,7 @@ public class Player extends Entity {
         if (keyHandler.leftPressed) turnLeft = true;
         if (keyHandler.rightPressed) turnLeft = false;
         if (keyHandler.jumpPressed && jumpCount < 2 && canJump) {
-            vSpeed = ++jumpCount == 1 ? -jump1Speed : -jump2Speed; // 一段跳和2段跳的速度不一致
+            speed.y = ++jumpCount == 1 ? -jump1Speed : -jump2Speed; // 一段跳和2段跳的速度不一致
             landed = onPlatform = false; // 标记浮空
             canJump = false;
             if (jumpCount == 1) gp.sound.playEffect(gp.sound.jump);
@@ -93,32 +91,32 @@ public class Player extends Entity {
         } catch (Exception ignored) {}
 
         if (!leftCollisionOn) { // 左边能走
-            if (keyHandler.leftPressed) x -= hSpeed;
-            if (platformXDisplacement < 0) x += platformXDisplacement; // 跟板移动
+            if (keyHandler.leftPressed) pos.x -= speed.x;
+            if (platformSpeed.x < 0) pos.x += platformSpeed.x; // 跟板移动
         }
         if (!rightCollisionOn) { // 右边能走
-            if (keyHandler.rightPressed) x += hSpeed;
-            if (platformXDisplacement > 0) x += platformXDisplacement; // 跟板移动
+            if (keyHandler.rightPressed) pos.x += speed.x;
+            if (platformSpeed.x > 0) pos.x += platformSpeed.x; // 跟板移动
         }
-        platformXDisplacement = 0; // 重置平板移动距离
+        platformSpeed.x = 0; // 重置平板移动距离
 
         if (landed || onPlatform) {
             jumpCount = 0; // 落地重置跳跃次数
             canJump = !keyHandler.jumpPressed; // 落地后要松开跳跃键才能重置跳跃
         }
 
-        if (vSpeed < 0 && !keyHandler.jumpPressed) // 释放跳跃键后减速：向上时的速度需要 * 系数
-            vSpeed *= jumpReleaseCoefficient;
-        vSpeed += Constant.G; // 先减速,再移动
-        y += vSpeed + platformYDisplacement; // 随板移动
-        platformYDisplacement = 0; // 重置
+        if (speed.y < 0 && !keyHandler.jumpPressed) // 释放跳跃键后减速：向上时的速度需要 * 系数
+            speed.y *= jumpReleaseCoefficient;
+        speed.y += Constant.G; // 先减速,再移动
+        pos.y += speed.y + platformSpeed.y; // 随板移动
+        platformSpeed.y = 0; // 重置
 
         if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { // 受伤后的无敌时间
             invincible = false;
             invincibleFrameCount = 0;
         }
 
-        if (y > gp.screenHeight) dead(); // 出底线死亡
+        if (pos.y > gp.screenHeight) dead(); // 出底线死亡
     }
 
     // 受伤
@@ -146,10 +144,10 @@ public class Player extends Entity {
         if (landed || onPlatform)
             img = (keyHandler.leftPressed || keyHandler.rightPressed) ? runImg : standImg;
         else
-            img = vSpeed < 0 ? jumpImg : downImg;
+            img = speed.y < 0 ? jumpImg : downImg;
 
         super.draw(g2);
         if (invincible) // 加一层受伤特效
-            g2.drawImage(invincibleImg.getImg(), (int)x, (int)y, width, height, null );
+            g2.drawImage(invincibleImg.getImg(), (int)pos.x, (int)pos.y, (int)box.x, (int)box.y, null );
     }
 }

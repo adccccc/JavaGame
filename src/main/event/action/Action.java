@@ -18,18 +18,14 @@ public abstract class Action {
 
     public Action() {}
 
-    public Action(GameObject gameObject, Trigger trigger, List<Action> followList) {
-
-        this.gameObject = gameObject;
-        this.trigger = trigger == null ? Trigger.IMMEDIATE : trigger;
-        this.followList = followList;
-    }
-
     // 如果还没触发, 则检查触发器
     public boolean checkTrigger() { return triggered = triggered || trigger.isTriggered(gameObject); }
 
-    // 动作实际执行内容
-    public abstract void execute(GameObject gameObject);
+    // 执行动作
+    public void executeAction(GameObject gameObject) {gameObject.visible = true; execute(gameObject);}
+
+    // 抽象方法，动作实际执行内容
+    protected abstract void execute(GameObject gameObject);
 
     // 动作是否完成
     // 默认为永不

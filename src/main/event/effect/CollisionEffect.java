@@ -2,6 +2,7 @@ package main.event.effect;
 
 import main.entity.GameObject;
 import main.entity.Player;
+import main.system.collision.shape.CcVector;
 
 // 物体碰撞到人物时产生的效果
 public interface CollisionEffect {
@@ -28,8 +29,7 @@ public interface CollisionEffect {
 
     // 效果：存档
     CollisionEffect SAVE_POINT = (((gameObject, player) -> {
-        player.gp.playerInitX = (int)gameObject.x;
-        player.gp.playerInitY = (int)gameObject.y;
+        player.gp.playerInitPos = new CcVector(gameObject.pos); // 本关重生位置改为当前物体坐标
         gameObject.removed = true; // 移除
     }));
 
@@ -38,13 +38,12 @@ public interface CollisionEffect {
 
         player.jumpCount = 1; // 碰跳板给小跳
         // 这个判断条件的-1为了抵消+1
-        if (player.vSpeed >= 0 && (player.y + player.height - player.vSpeed - 1 <= gameObject.y)) { // 仅在下落的时候碰撞
-            player.vSpeed = 0;
+        if (player.speed.y >= 0 && (player.pos.y + player.box.y - player.speed.y - 1 <= gameObject.pos.y)) { // 仅在下落的时候碰撞
+            player.speed.y = 0;
             player.onPlatform = true;
             player.jumpCount = 0; // 踩板重置跳跃次数
-            player.y = gameObject.y - player.height + 1; // 调整位置，贴住平台（+1是为了固定碰撞位置，因为不加1碰不到，人物要往下掉，会闪）
-            player.platformXDisplacement = gameObject.hSpeed; // 标记横向偏移位置
-            player.platformYDisplacement = gameObject.vSpeed; // 标记竖向偏移位置
+            player.pos.y = gameObject.pos.y - player.box.y + 1; // 调整位置，贴住平台（+1是为了固定碰撞位置，因为不加1碰不到，人物要往下掉，会闪）
+            player.platformSpeed = new CcVector(gameObject.speed); // 保存平板位移
         }
     }));
 }

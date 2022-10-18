@@ -54,9 +54,9 @@ public class GameObjectManager {
     private void setup(int index, int width, int height, int shape, CcPolygon poly, double collisionRadius, CollisionEffect effect, int imgFrame, String... imgNames) throws IOException {
 
         objectLibrary[index] = new GameObject();
+        objectLibrary[index].pos = new CcVector(0,0);
+        objectLibrary[index].box = new CcVector(width, height);
         objectLibrary[index].img = generateDynamicImg(imgFrame, imgNames);
-        objectLibrary[index].width = width;
-        objectLibrary[index].height = height;
         objectLibrary[index].shape = shape;
         objectLibrary[index].collisionPoly = poly;
         objectLibrary[index].collisionRadius = collisionRadius;
@@ -100,8 +100,7 @@ public class GameObjectManager {
                 int num = Integer.parseInt(arr[col++]);
                 if (num <= 0) continue;
                 GameObject gameObject = objectLibrary[num].clone();
-                gameObject.x = (col-1) * Constant.TILE_SIZE;
-                gameObject.y = (row) * Constant.TILE_SIZE;
+                gameObject.pos = new CcVector((col-1) * Constant.TILE_SIZE, (row) * Constant.TILE_SIZE);
                 objectList.add(gameObject);
             }
 
@@ -122,19 +121,21 @@ public class GameObjectManager {
             return;
 
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
         Map<String, String> propMap = new HashMap<>();
+
+        // 每关配置文件的第一行为重生坐标
+        String line = br.readLine();
+        // 坐标没有初始化时加载，否则继续使用存档点坐标
+        if (gp.playerInitPos.x == 0 && gp.playerInitPos.y == 0)
+            gp.playerInitPos = new CcVector(line);
+
+        // 加载游戏物体配置
         while ((line = br.readLine()) != null) {
-            if (line.isEmpty()) {
+
+            if (line.isEmpty() && !propMap.isEmpty()) {
                 objectList.add(createGameObjectByPropMap(propMap));
                 propMap.clear();
-            } else if (line.startsWith("--")) { // 起始坐标也在这个文件保存
-                String[] pos = line.substring(2).split(",");
-                if (gp.playerInitX == 0 && gp.playerInitY == 0) { // 坐标没有初始化时加载，否则继续使用存档点坐标
-                    gp.playerInitX = Integer.parseInt(pos[0]);
-                    gp.playerInitY = Integer.parseInt(pos[1]);
-                }
-            } else if (!line.startsWith("#")){
+            } else if (!line.startsWith("#")) { // 配置的注释以#开头
                 String[] prop = line.split("=");
                 propMap.put(prop[0].trim(), prop[1].trim());
             }
@@ -147,14 +148,9 @@ public class GameObjectManager {
 
         // 从物体库中clone一个标准物体
         GameObject gameObject = objectLibrary[Integer.parseInt(propMap.get("index"))].clone();
-        if (propMap.containsKey("x")) gameObject.x = Double.parseDouble(propMap.get("x"));
-        if (propMap.containsKey("y")) gameObject.y = Double.parseDouble(propMap.get("y"));
-        if (propMap.containsKey("width")) gameObject.width = Integer.parseInt(propMap.get("width"));
-        if (propMap.containsKey("height")) gameObject.height = Integer.parseInt(propMap.get("height"));
-        if (propMap.containsKey("hSpeed")) gameObject.hSpeed = Double.parseDouble(propMap.get("hSpeed"));
-        if (propMap.containsKey("vSpeed")) gameObject.vSpeed = Double.parseDouble(propMap.get("vSpeed"));
-        if (propMap.containsKey("hAcceleration")) gameObject.hAcceleration = Double.parseDouble(propMap.get("hAcceleration"));
-        if (propMap.containsKey("vAcceleration")) gameObject.vAcceleration = Double.parseDouble(propMap.get("vAcceleration"));
+        if (propMap.containsKey("speed")) gameObject.speed = new CcVector(propMap.get("speed"));
+        if (propMap.containsKey("pos")) gameObject.pos = new CcVector(propMap.get("pos"));
+        if (propMap.containsKey("box")) gameObject.pos = new CcVector(propMap.get("box"));
         if (propMap.containsKey("scale")) gameObject.scale = Double.parseDouble(propMap.get("scale"));
         if (propMap.containsKey("rotate")) gameObject.rotate = Integer.parseInt(propMap.get("rotate"));
         if (propMap.containsKey("visible")) gameObject.visible = Boolean.parseBoolean(propMap.get("visible"));
@@ -179,7 +175,6 @@ public class GameObjectManager {
                 break;
             }
             obj.checkAndExecuteAction(); // 执行物体动作
-            obj.reCalcSpeed(); // 重新计算物体速度
             CollisionChecker.checkGameObject(gp.player, obj); // 检查角色和物体间的碰撞
             obj.reCalcLocation(); // 重新计算物体位置
             obj.surviveTime++; // 存活计时++
@@ -194,5 +189,5 @@ public class GameObjectManager {
     public void draw(Graphics2D g2) { for (GameObject obj : objectList) obj.draw(g2); }
 
     // 检查物体是否出屏幕
-    private boolean checkObjectOffMap(Entity object) { return object.removed = object.removed || object.x < -100 || object.x > gp.screenWidth + 100 || object.y < -100 || object.y > gp.screenHeight; }
+    private boolean checkObjectOffMap(Entity object) { return object.removed = object.removed || object.pos.x < -100 || object.pos.x > gp.screenWidth + 100 || object.pos.y < -100 || object.pos.y > gp.screenHeight; }
 }

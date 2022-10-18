@@ -3,6 +3,7 @@ package main.entity;
 import main.event.action.Action;
 import main.event.effect.CollisionEffect;
 import main.system.DynamicImage;
+import main.system.collision.shape.CcVector;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -26,6 +27,9 @@ public class GameObject extends Entity {
                 field.set(cloneObj, field.get(this));
             }
             cloneObj.surviveTime = 0; // 重新计时
+            cloneObj.speed = new CcVector(this.speed);
+            cloneObj.pos = new CcVector(this.pos);
+            cloneObj.box = new CcVector(this.box);
             cloneObj.img = new DynamicImage(this.img.frame, this.img.images); // 新建GIF集
             cloneObj.actionList = new ArrayList<>(this.actionList); // 加载默认事件
             return cloneObj;
@@ -50,7 +54,7 @@ public class GameObject extends Entity {
                         iter.add(followed);
             } else if (action.checkTrigger()) {
                 // 达到触发条件时，执行动作
-                action.execute(this);
+                action.executeAction(this);
             }
         }
     }

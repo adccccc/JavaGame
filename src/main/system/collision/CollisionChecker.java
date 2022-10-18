@@ -21,9 +21,10 @@ public class CollisionChecker {
      */
     public static void checkTile(Player player, TileManager tileManager) {
 
-        int leftX = (int)player.x + player.solidRect.x;
+
+        int leftX = (int)player.pos.x + player.solidRect.x;
         int rightX = leftX + player.solidRect.width;
-        int topY = (int)player.y + player.solidRect.y;
+        int topY = (int)player.pos.y + player.solidRect.y;
         int bottomY = topY + player.solidRect.height;
 
         int entityLeftCol = leftX / Constant.TILE_SIZE;
@@ -33,35 +34,35 @@ public class CollisionChecker {
 
         int tileNum1, tileNum2;
         // 左边
-        int nextLeftCol = (leftX - (int)player.hSpeed - 1) / Constant.TILE_SIZE;
+        int nextLeftCol = (leftX - (int)player.speed.x - 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[nextLeftCol][entityTopRow];
         tileNum2 = tileManager.mapTileNum[nextLeftCol][entityBottomRow];
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
             player.leftCollisionOn = true;
 
         // 右边
-        int nextRightCol = (rightX + (int)player.hSpeed + 1) / Constant.TILE_SIZE;
+        int nextRightCol = (rightX + (int)player.speed.x + 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[nextRightCol][entityTopRow];
         tileNum2 = tileManager.mapTileNum[nextRightCol][entityBottomRow];
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
             player.rightCollisionOn = true;
 
         // 上边
-        entityTopRow = (topY + (int)player.vSpeed - 1) / Constant.TILE_SIZE;
+        entityTopRow = (topY + (int)player.speed.y - 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[entityLeftCol][entityTopRow];
         tileNum2 = tileManager.mapTileNum[entityRightCol][entityTopRow];
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision)
-            player.vSpeed = player.platformYDisplacement = 0; // 往上跳，碰撞 (并且落板)
+            player.speed.y = player.platformSpeed.y = 0; // 往上跳，碰撞 (并且落板)
 
         // 下边
-        entityBottomRow = (bottomY + (int)player.vSpeed + 1) / Constant.TILE_SIZE;
+        entityBottomRow = (bottomY + (int)player.speed.y + 1) / Constant.TILE_SIZE;
         tileNum1 = tileManager.mapTileNum[entityLeftCol][entityBottomRow];
         tileNum2 = tileManager.mapTileNum[entityRightCol][entityBottomRow];
 
         if (tileManager.tile[tileNum1].collision || tileManager.tile[tileNum2].collision) {
-            player.vSpeed = 0; // 往下落，碰撞
+            player.speed.y = 0; // 往下落，碰撞
             player.landed = true; // 踩在地面上
-            player.y = (entityBottomRow - 1) * Constant.TILE_SIZE; // 调整位置，贴住地面
+            player.pos.y = (entityBottomRow - 1) * Constant.TILE_SIZE; // 调整位置，贴住地面
         } else {
             player.landed = false;
         }
@@ -71,14 +72,11 @@ public class CollisionChecker {
     public static void checkGameObject(Player player, GameObject gameObject) {
 
         // 物体的矩形边界转换成多边形
-        CcPolygon playerSolidPolyGon = new CcPolygon(new CcVector(player.x + player.solidRect.x, player.y + player.solidRect.y),
-                new CcVector(player.x + player.solidRect.x, player.y + player.solidRect.y + player.solidRect.height),
-                new CcVector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y),
-                new CcVector(player.x + player.solidRect.x + player.solidRect.width, player.y + player.solidRect.y + player.solidRect.height));
+        CcPolygon absoluteSolidArea = new CcPolygon(player.solidRect.width, player.solidRect.height).plusOffset(player.pos.plus(new CcVector(player.solidRect.x, player.solidRect.y)));
 
-        if (gameObject.shape == 0 && polygonsCollide(playerSolidPolyGon, new CcPolygon(gameObject.getCollisionPolyForNull(), gameObject.getScreenStartPos())))
+        if (gameObject.shape == 0 && polygonsCollide(absoluteSolidArea, new CcPolygon(gameObject.getCollisionPolyForNull(), gameObject.getScreenStartPos())))
             gameObject.onCollision(player);
-        if (gameObject.shape == 1 && circleCollide(playerSolidPolyGon, new CcCircle(gameObject.x + gameObject.width / 2.0, gameObject.y + gameObject.height / 2.0, gameObject.collisionRadius)))
+        if (gameObject.shape == 1 && circleCollide(absoluteSolidArea, new CcCircle(gameObject.pos.x + gameObject.box.x / 2.0, gameObject.pos.y + gameObject.box.y / 2.0, gameObject.collisionRadius)))
             gameObject.onCollision(player);
     }
 

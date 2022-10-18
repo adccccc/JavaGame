@@ -33,7 +33,7 @@ public class TileManager {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
             tile[index].collision = collision;
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
     }
 
     public void loadMap(int level) {

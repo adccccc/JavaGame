@@ -16,14 +16,14 @@ public class KeyHandler implements KeyListener {
 
         // 角色控制
         if (gp.gameState == gp.TITLE_STATE) titleStateKeyPressed(e);
-        // 回车开始游戏
+        // 开始游戏
         if (gp.gameState == gp.PLAY_STATE) playStateKeyPressed(e, true);
         // 按P暂停
         if (gp.gameState == gp.PAUSE_STATE || gp.gameState == gp.PLAY_STATE) pauseStateKeyPressed(e);
         // 按R重置
         if ((gp.gameState == gp.FAILED_STATE || gp.gameState == gp.PLAY_STATE) && e.getKeyCode() == KeyEvent.VK_R) {
             gp.gameState = gp.PLAY_STATE;
-            gp.resetLevel(false);
+            gp.resetLevel();
         }
         // 开关音效
         if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute();

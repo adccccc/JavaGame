@@ -2,6 +2,7 @@ package main.event.action;
 
 import main.entity.GameObject;
 import main.system.GamePanel;
+import main.system.collision.shape.CcVector;
 
 public class ActionFactory {
 
@@ -15,12 +16,10 @@ public class ActionFactory {
             if ("speedChange".equals(actionName)) action = new SpeedChangeAction(gameObject, actionParam);
             if ("timerMove".equals(actionName)) action = new TimerMoveAction(gameObject, actionParam);
             if ("wander".equals(actionName)) action = new WanderAction(gameObject, actionParam);
-            if ("test".equals(actionName)) action = new HeartBulletAction(gameObject, actionParam);
             if ("gameOver".equals(actionName)) action = new Action() {public void execute(GameObject gameObject) { GamePanel.instance.gamePassed(); }}; // 游戏结束事件
-            if (action != null) {
-                action.gameObject = gameObject;
-                action.trigger = trigger;
-            }
+            if ("shapeBullet".equals(actionName)) action = new ShapeBulletAction(gameObject, actionParam);
+            if ("rebound".equals(actionName)) action = new ReboundAction();
+            if (action != null) { action.gameObject = gameObject; action.trigger = trigger;}
         } catch (Exception e) { // for debug
             e.printStackTrace();
         }
@@ -31,22 +30,14 @@ public class ActionFactory {
 
     /**
      * 修改物体速度
-     * 不能同时修改速度和加速度，不然速度会被覆盖
      */
     public static class SpeedChangeAction extends Action {
 
-        public double vSpeed, hSpeed, vAcceleration, hAcceleration;
+        public CcVector speed;
 
-        public SpeedChangeAction(GameObject gameObject, String actionParam) {
+        public SpeedChangeAction(GameObject gameObject, String actionParam) {speed = new CcVector(actionParam);}
 
-            String[] param = actionParam.split(",");
-            vSpeed = Double.parseDouble(param[0]);
-            hSpeed = Double.parseDouble(param[1]);
-            vAcceleration = Double.parseDouble(param[2]);
-            hAcceleration = Double.parseDouble(param[3]);
-        }
-
-        public void execute(GameObject gameObject) { gameObject.vSpeed = vSpeed; gameObject.hSpeed = hSpeed; gameObject.vAcceleration = vAcceleration; gameObject.hAcceleration = hAcceleration; }
+        public void execute(GameObject gameObject) { gameObject.speed = new CcVector(speed); }
     }
 
     /**
@@ -64,15 +55,9 @@ public class ActionFactory {
         }
 
         // 移动一定时间
-        public void execute(GameObject gameObject) {
+        public void execute(GameObject gameObject) { if (++timer > moveTime) gameObject.stopMoving(); else super.executeAction(gameObject);}
 
-            if (++timer > moveTime) gameObject.stopMoving();
-            else super.execute(gameObject);
-        }
-
-        public boolean finished() {
-            return timer > moveTime;
-        }
+        public boolean finished() {return timer > moveTime;}
     }
 
     /**
@@ -80,26 +65,20 @@ public class ActionFactory {
      */
     public static class WanderAction extends Action {
 
-        public double vSpeed, hSpeed;
-        public int wanderTime;
-        private int count = 0;
+        public CcVector speed;
+        public int wanderTime, count = 0;
 
         public WanderAction(GameObject gameObject, String actionParam) {
 
             String[] param = actionParam.split(",");
-            vSpeed = Double.parseDouble(param[0]);
-            hSpeed = Double.parseDouble(param[1]);
+            speed = new CcVector(Double.parseDouble(param[0]), Double.parseDouble(param[1]));
             wanderTime = Integer.parseInt(param[2]);
         }
 
         // 在两个点之间徘徊
         public void execute(GameObject gameObject) {
 
-            if (++count % (2 * wanderTime) >= wanderTime) {
-                gameObject.vSpeed = vSpeed; gameObject.hSpeed = hSpeed;
-            } else {
-                gameObject.vSpeed = -vSpeed; gameObject.hSpeed = -hSpeed;
-            }
+            gameObject.speed = (++count % (2 * wanderTime) >= wanderTime) ? new CcVector(speed) : new CcVector(-speed.x, -speed.y);
         }
     }
 
@@ -112,36 +91,55 @@ public class ActionFactory {
 
         public void execute(GameObject gameObject) {
 
-            if (gameObject.x <= 32 || gameObject.x >= 768) {gameObject.hSpeed *= -1; count--;}
-            if (gameObject.y <= 32 || gameObject.y >= 616) {gameObject.vSpeed *= -1; count--;}
+            if (gameObject.pos.x <= 32 || gameObject.pos.x >= 768) {gameObject.speed.x *= -1; count--;}
+            if (gameObject.pos.y <= 32 || gameObject.pos.y >= 616) {gameObject.speed.y *= -1; count--;}
         }
 
         public boolean finished() { return count > 0; }
     }
 
     /**
-     * 心形曲线子弹
+     * BOSS弹幕绘制
+     * 支持多种图形
      */
-    public static class HeartBulletAction extends Action {
+    public static class ShapeBulletAction extends Action {
 
-        int timer = 0;
+        private int totalBullet, bulletIndex; // 总弹幕数和子弹类型
+        private String shape; // 形状
 
-        public HeartBulletAction(GameObject gameObject, String actionParam) {}
+        public ShapeBulletAction(GameObject gameObject, String actionParam) {
+
+            String[] arr = actionParam.split(",");
+            totalBullet = Integer.parseInt(arr[0]);
+            bulletIndex = Integer.parseInt(arr[1]);
+            shape = arr[2];
+        }
 
         public void execute(GameObject gameObject) {
 
-            if (timer % 50 == 0) {
+            GameObject[] bullets = new GameObject[totalBullet];
+            for (int i = 0; i < totalBullet; i++) {
+                bullets[i] = GamePanel.instance.gameObjectManager.objectLibrary[bulletIndex].clone(); // 创建弹幕
+                GamePanel.instance.gameObjectManager.waitToAddList.add(bullets[i]); // 加到下一帧
+                bullets[i].pos = gameObject.pos.plus(new CcVector(gameObject.box.x / 2.0, gameObject.box.y / 2.0)); // 起始位置为物体中心
+                // ------ 计算初始速度 ------
+                if ("circle".equals(shape)) { // 圆形扩散
 
-                for (int i = 0; i < 30; i++) {
-                    GameObject obj = GamePanel.instance.gameObjectManager.objectLibrary[11].clone();
-                    obj.x = 400;
-                    obj.y = 50 + timer / 2.0;
-                    double theta = i * 12 * Math.PI / 180;
-                    obj.vSpeed = -0.1 + (1 + Math.cos(theta)) * Math.cos(theta) * 0.8;
-                    obj.hSpeed = (1 + Math.cos(theta)) * Math.sin(theta) * 0.6;
-                    GamePanel.instance.gameObjectManager.waitToAddList.add(obj);
+
+                } else if ("rect".equals(shape)) {
+
+                } else if ("triangle".equals(shape)) {
+
+                } else if ("heart".equals(shape)) { // 心形扩散
+                    // 心形曲线计算公式； ρ(Theta) = α(1+cosTheta)
+                    double theta = i * 360.0 / totalBullet * Math.PI / 180;
+                    bullets[i].speed = new CcVector((1 + Math.cos(theta)) * Math.sin(theta) * 0.6,
+                            (1 + Math.cos(theta)) * Math.cos(theta) * 0.8);
                 }
+
             }
+
+
 
 //            GameObject obj = GamePanel.instance.gameObjectManager.objectLibrary[4].clone();
 //            obj.x = 400;
@@ -151,10 +149,7 @@ public class ActionFactory {
 //            GamePanel.instance.gameObjectManager.waitToAddList.add(obj);
         }
 
-        public boolean finished() {
-
-            return ++timer > 300;
-        }
+        public boolean finished() { return triggered; }
     }
 
 }
