@@ -23,7 +23,7 @@ public class Sound {
             // 这里的InputStream要包装成BufferedInputStream, 才能提供给AudioSystem调用, 不然可能会IOException
             (jump = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/t_1.wav"))));
             (hurt = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/rp.wav"))));
-            (dead = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/ngm_2.wav"))));
+            (dead = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/j.wav"))));
             (music = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/mck.wav"))));
             (nextLevel = AudioSystem.getClip()).open(AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/sounds/lblhnkg.wav"))));
 
@@ -32,7 +32,7 @@ public class Sound {
             gameBgm = loadMidi("jntm");
             bossBgm = loadMidi("jntmRemix");
             currentBgm = titleBgm;
-        } catch (Exception e) { } // do nothing
+        } catch (Exception e) { e.printStackTrace();} // do nothing
     }
 
     private Sequencer loadMidi(String bgmName) throws MidiUnavailableException, InvalidMidiDataException, IOException {
