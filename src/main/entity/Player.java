@@ -64,9 +64,8 @@ public class Player extends Entity {
         try {
             for (int i = 0; i < imageNames.length; i++)
                 images[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/" + imageNames[i])));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) { }
+
         return new DynamicImage(frame, images);
     }
 
@@ -80,10 +79,7 @@ public class Player extends Entity {
             canJump = false;
             if (jumpCount == 1) gp.sound.playEffect(gp.sound.jump);
         }
-        if (keyHandler.jumpReleased) {
-            canJump = true; // 可以再次跳跃了
-            keyHandler.jumpReleased = false;
-        }
+        if (keyHandler.jumpReleased) { keyHandler.jumpReleased = ! (canJump = true); } // 可以再次跳跃了
 
         leftCollisionOn = rightCollisionOn = false;
         try { // 避免地图外碰撞时的数组越界错误
@@ -105,16 +101,13 @@ public class Player extends Entity {
             canJump = !keyHandler.jumpPressed; // 落地后要松开跳跃键才能重置跳跃
         }
 
-        if (speed.y < 0 && !keyHandler.jumpPressed) // 释放跳跃键后减速：向上时的速度需要 * 系数
-            speed.y *= jumpReleaseCoefficient;
-        speed.y += Constant.G; // 先减速,再移动
+        if (speed.y < 0 && !keyHandler.jumpPressed) speed.y *= jumpReleaseCoefficient; // 释放跳跃键后减速：向上时的速度需要 * 系数
+
+        speed.y += 0.4; // 重力加速度 = 0.4
         pos.y += speed.y + platformSpeed.y; // 随板移动
         platformSpeed.y = 0; // 重置
 
-        if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { // 受伤后的无敌时间
-            invincible = false;
-            invincibleFrameCount = 0;
-        }
+        if (invincible && ++invincibleFrameCount >= MAX_INVINCIBLE_FRAME) { invincible = false;invincibleFrameCount = 0; }  // 受伤后的无敌时间
 
         if (pos.y > gp.screenHeight) dead(); // 出底线死亡
     }
@@ -123,6 +116,7 @@ public class Player extends Entity {
     public void gotHurt() {
 
         if (invincible) return;// 无敌时免疫伤害
+
         if (--hp > 0) { // 受伤
             invincible = true; // 无敌
             gp.sound.playEffect(gp.sound.hurt);
@@ -141,13 +135,10 @@ public class Player extends Entity {
     public void draw(Graphics2D g2) {
 
         // 根据人物状态确定动图
-        if (landed || onPlatform)
-            img = (keyHandler.leftPressed || keyHandler.rightPressed) ? runImg : standImg;
-        else
-            img = speed.y < 0 ? jumpImg : downImg;
+        if (landed || onPlatform) img = (keyHandler.leftPressed || keyHandler.rightPressed) ? runImg : standImg;
+        else img = speed.y < 0 ? jumpImg : downImg;
 
         super.draw(g2);
-        if (invincible) // 加一层受伤特效
-            g2.drawImage(invincibleImg.getImg(), (int)pos.x, (int)pos.y, (int)box.x, (int)box.y, null );
+        if (invincible) g2.drawImage(invincibleImg.getImg(), (int)pos.x, (int)pos.y, (int)box.x, (int)box.y, null );  // 加一层受伤特效
     }
 }

@@ -20,12 +20,3 @@ actionName = speedChange
 actionParam = 0,-6,0,0
 triggerName = box
 triggerParam = 112,416,32,96
-
-# 心形弹幕
-index = 99
-pos = 400,150
-visible = false
-actionName = shapeBullet
-actionParam = 50,11,heart
-triggerName = surviveTime
-triggerParam = 300

@@ -13,10 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // 画面设置
     public final int tileSize = Constant.TILE_SIZE; // 32px 的地砖;
-    public final int maxScreenCol = 25, maxScreenRow = 20;
-    public final int screenWidth = tileSize * maxScreenCol; // 800 pixels
-    public final int screenHeight = tileSize * maxScreenRow; // 640 pixels
-
+    public final int maxScreenCol = 25, maxScreenRow = 20, screenWidth = 800, screenHeight = 640; // 800 x 640px
     // 游戏状态
     public int currentLevel = 1, startLevel = 1; // 当前关卡和起始关卡
     public final int TOTAL_LEVEL = 6; // 总关卡数目
@@ -46,10 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
             this.setDoubleBuffered(true); // 性能提升
             this.addKeyListener(keyHandler);
             this.setFocusable(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        } catch (Exception e) { System.exit(1); }
     }
 
     public void setupGame() {
@@ -98,9 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
             tileManager.loadMap(this.currentLevel); // 跳关时加载地图
             player.resetProperties(); // 重置人物属性
             if (currentLevel == TOTAL_LEVEL) sound.changeBgm(sound.bossBgm); // 进BOSS换音效
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) { }
     }
 
     /**
@@ -122,9 +114,8 @@ public class GamePanel extends JPanel implements Runnable {
                 update();
                 repaint();
                 delta--;
-            }
-        }
-    }
+
+    } }}
 
     /**
      * 重新计算所有物体与角色
@@ -138,9 +129,8 @@ public class GamePanel extends JPanel implements Runnable {
                 player.update();
             } catch (Exception e) { // 必要的catch, 防止某一帧冲突
                 e.printStackTrace();
-            }
-        }
-    }
+
+    } } }
 
     /**
      * 重新绘制所有内容

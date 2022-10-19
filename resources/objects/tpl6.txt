@@ -1,0 +1,293 @@
+400,544
+# 第一波 ---------------------------
+# 圆形弹幕
+index = 99
+pos = 400,150
+visible = false
+actionName = shapeBullet
+actionParam = 40,11,circle,1.0
+triggerName = surviveTime
+triggerParam = 300
+
+# 圆形弹幕
+index = 99
+pos = 200,100
+visible = false
+actionName = shapeBullet
+actionParam = 48,11,circle,0.8
+triggerName = surviveTime
+triggerParam = 450
+
+# 圆形弹幕
+index = 99
+pos = 600,200
+visible = false
+actionName = shapeBullet
+actionParam = 40,11,circle,0.6
+triggerName = surviveTime
+triggerParam = 600
+
+# 圆形弹幕
+index = 99
+pos = 300,50
+visible = false
+actionName = shapeBullet
+actionParam = 60,11,circle,0.5
+triggerName = surviveTime
+triggerParam = 700
+
+# 圆形弹幕
+index = 99
+pos = 550,600
+visible = false
+actionName = shapeBullet
+actionParam = 40,11,circle,0.6
+triggerName = surviveTime
+triggerParam = 900
+
+# 右边飞刺补刀
+index = 8
+pos = -99,480;-99,512;-99,544
+actionName = speedChange
+actionParam = 8,0,0,0
+triggerName = surviveTime
+triggerParam = 1370
+
+# 第二波 ----------------------------------
+# 方形弹幕
+index = 99
+pos = 450,150
+visible = false
+actionName = shapeBullet
+actionParam = 32,16,rect
+triggerName = surviveTime
+triggerParam = 1500
+
+# 方形弹幕
+index = 99
+pos = 200,100;600,100
+visible = false
+actionName = shapeBullet
+actionParam = 48,16,rect
+triggerName = surviveTime
+triggerParam = 1600
+
+# 方形弹幕
+index = 99
+pos = 50,480;350,600;650,480
+visible = false
+actionName = shapeBullet
+actionParam = 20,16,rect
+triggerName = surviveTime
+triggerParam = 1700
+
+# 上飞补刀
+index = 5
+pos = 32,640;96,640;160,640;224,640;288,640;352,640;416,640;480,640;544,640;608,640;672,640;763,640;
+actionName = speedChange
+actionParam = 0,-8,0,0
+triggerName = surviveTime
+triggerParam = 2000
+
+# 第三波 心形 -----------------------------------------
+index = 99
+pos = 400,80
+visible = false
+actionName = shapeBullet
+actionParam = 48,12,heart
+triggerName = surviveTime
+triggerParam = 2400
+
+index = 99
+pos = 150,150;650,150
+visible = false
+actionName = shapeBullet
+actionParam = 48,12,heart
+triggerName = surviveTime
+triggerParam = 2500
+
+index = 99
+pos = 200,400;400,500;600,400
+visible = false
+actionName = shapeBullet
+actionParam = 48,12,heart
+triggerName = surviveTime
+triggerParam = 2700
+
+## 下飞补刀
+index = 6
+pos = 32,-99;64,-99;96,-99;128,-99;160,-99;192,-99;224,-99;256,-99;512,-99;544,-99;576,-99;608,-99;640,-99;672,-99;704,-99;736,-99
+actionName = speedChange
+actionParam = 0,12,0,0
+triggerName = surviveTime
+triggerParam = 2940
+
+#----------------------------------------最终---------------------------------------
+# 随机弹幕
+index = 99
+pos = 450,150
+visible = false
+actionName = shapeBullet
+actionParam = 60,17,random
+triggerName = surviveTime
+triggerParam = 3200
+
+# 随机弹幕
+index = 99
+pos = 200,452
+visible = false
+actionName = shapeBullet
+actionParam = 32,17,random
+triggerName = surviveTime
+triggerParam = 3300
+
+# 随机弹幕
+index = 99
+pos = 420,600
+visible = false
+actionName = shapeBullet
+actionParam = 32,17,random
+triggerName = surviveTime
+triggerParam = 3500
+
+# 方形弹幕
+index = 99
+pos = 150,150
+visible = false
+actionName = shapeBullet
+actionParam = 32,16,rect
+triggerName = surviveTime
+triggerParam = 3700
+
+# 圆形弹幕
+index = 99
+pos = 125,566
+visible = false
+actionName = shapeBullet
+actionParam = 28,11,circle,0.6
+triggerName = surviveTime
+triggerParam = 3800
+
+# 方形弹幕
+index = 99
+pos = 770,100
+visible = false
+actionName = shapeBullet
+actionParam = 48,16,rect,0.5
+triggerName = surviveTime
+triggerParam = 3900
+
+index = 99
+pos = 400,80
+visible = false
+actionName = shapeBullet
+actionParam = 36,12,heart
+triggerName = surviveTime
+triggerParam = 4000
+
+# 随机弹幕
+index = 99
+pos = 420,600
+visible = false
+actionName = shapeBullet
+actionParam = 32,17,random
+triggerName = surviveTime
+triggerParam = 4050
+
+index = 99
+pos = 400,80
+visible = false
+actionName = shapeBullet
+actionParam = 36,12,heart
+triggerName = surviveTime
+triggerParam = 4100
+
+index = 99
+pos = 400,80
+visible = false
+actionName = shapeBullet
+actionParam = 36,12,heart
+triggerName = surviveTime
+triggerParam = 4200
+
+index = 99
+pos = 32,32
+visible = false
+actionName = shapeBullet
+actionParam = 40,11,circle
+triggerName = surviveTime
+triggerParam = 4150
+
+index = 99
+pos = -32,600
+visible = false
+actionName = shapeBullet
+actionParam = 40,11,circle
+triggerName = surviveTime
+triggerParam = 4250
+
+index = 99
+pos = 688,555
+visible = false
+actionName = shapeBullet
+actionParam = 30,11,circle
+triggerName = surviveTime
+triggerParam = 4350
+
+index = 99
+pos = 80,80;600,80
+visible = false
+actionName = shapeBullet
+actionParam = 36,12,heart
+triggerName = surviveTime
+triggerParam = 4450
+
+index = 99
+pos = 688,42
+visible = false
+actionName = shapeBullet
+actionParam = 30,11,circle
+triggerName = surviveTime
+triggerParam = 4400
+
+# 随机弹幕
+index = 99
+pos = 420,600
+visible = false
+actionName = shapeBullet
+actionParam = 32,17,random
+triggerName = surviveTime
+triggerParam = 4500
+
+index = 99
+pos = 400,80
+visible = false
+actionName = shapeBullet
+actionParam = 48,12,heart
+triggerName = surviveTime
+triggerParam = 4600
+
+# 随机弹幕
+index = 99
+pos = 128,32;554,64;400,500
+visible = false
+actionName = shapeBullet
+actionParam = 48,17,random
+triggerName = surviveTime
+triggerParam = 4700
+
+# ----------------------------------------游戏结束-------------------------------------------
+index = 99
+pos = 128,32
+visible = false
+actionName = gameOver
+triggerName = surviveTime
+triggerParam = 5200
+
+index = 98
+pos = 320,64
+box = 180,180
+actionName = speedChange
+actionParam = 0,5
+triggerName = surviveTime
+triggerParam = 5000

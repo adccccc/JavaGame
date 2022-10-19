@@ -21,10 +21,7 @@ public class KeyHandler implements KeyListener {
         // 按P暂停
         if (gp.gameState == gp.PAUSE_STATE || gp.gameState == gp.PLAY_STATE) pauseStateKeyPressed(e);
         // 按R重置
-        if ((gp.gameState == gp.FAILED_STATE || gp.gameState == gp.PLAY_STATE) && e.getKeyCode() == KeyEvent.VK_R) {
-            gp.gameState = gp.PLAY_STATE;
-            gp.resetLevel();
-        }
+        if ((gp.gameState == gp.FAILED_STATE || gp.gameState == gp.PLAY_STATE) && e.getKeyCode() == KeyEvent.VK_R) { gp.gameState = gp.PLAY_STATE; gp.resetLevel(); }
         // 开关音效
         if (e.getKeyCode() == KeyEvent.VK_M) gp.sound.changeMute();
         if (e.getKeyCode() == KeyEvent.VK_B) gp.ui.showPos = !gp.ui.showPos;
@@ -62,10 +59,7 @@ public class KeyHandler implements KeyListener {
             gp.player.turnLeft = false;
         }
 
-        if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) {
-            jumpPressed = pressed;
-            jumpReleased = !pressed;
-        }
+        if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_SHIFT) { jumpReleased = ! (jumpPressed = pressed); }
     }
 
     private void pauseStateKeyPressed(KeyEvent e) {if (e.getKeyCode() == KeyEvent.VK_P) GamePanel.instance.changePause();}

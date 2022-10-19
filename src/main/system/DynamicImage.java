@@ -20,8 +20,8 @@ public class DynamicImage {
 
     public BufferedImage getImg() {
 
-        if (++counter >= frame * images.length)
-            counter = 0;
+        if (++counter >= frame * images.length) counter = 0;
+
         return images[counter / frame];
     }
 }

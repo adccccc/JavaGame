@@ -50,7 +50,7 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
         int minutes = (int)playTime / 60;
         drawTextAtCenter("重试次数：" + gp.player.retryNum + ", 耗时: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 250, Color.green);
-        if (gp.difficulty == 3 && gp.startLevel == 1) drawTextAtCenter("困难模式挑战成功，请找@dylanou领取小黑子奖励一份", 300, Color.BLACK); // 彩蛋
+        if (gp.difficulty == 3 && gp.startLevel == 1) drawTextAtCenter("困难模式挑战成功，请找@dylanou领取小黑子奖励一份", 300, Color.RED); // 彩蛋
     }
 
     public void drawFailedScreen() {
@@ -61,10 +61,10 @@ public class UI {
 
     public void drawPlayScreen() {
 
-        g2.drawString("重试： " + gp.player.retryNum + "次", 20, 40);
-        playTime += (double)1/ Constant.FPS;
+        g2.drawString("重试： " + gp.player.retryNum + "次", 20, 30);
+        playTime += (double) 1 / Constant.FPS;
         int minutes = (int)playTime / 60;
-        g2.drawString("Time: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 550, 40);
+        g2.drawString("Time: " + minutes + ":" + dFormat.format(playTime - minutes * 60), 550, 30);
     }
 
     public void drawTitleScreen() {
@@ -89,7 +89,7 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
         drawText(">", 240, 300 + currentCommand * 60, Color.YELLOW);
         drawText( "开始冒险", 290,360, Color.RED);
-        drawText( "关卡: " + (gp.currentLevel == 10 ? "BOSS" : gp.currentLevel), 290, 420, Color.BLUE);
+        drawText( "关卡: " + (gp.currentLevel == gp.TOTAL_LEVEL ? "BOSS" : gp.currentLevel), 290, 420, Color.BLUE);
         StringBuilder difficultDescribe = new StringBuilder("难度: ☆");
         for (int i = 1; i < gp.difficulty; i++) difficultDescribe.append("☆");
         drawText( difficultDescribe.toString() , 290,480, Color.BLUE);

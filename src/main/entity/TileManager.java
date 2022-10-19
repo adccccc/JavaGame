@@ -35,9 +35,7 @@ public class TileManager {
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/images/" + imageName + ".png"));
             tile[index].collision = collision;
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-        }
+        } catch (Exception ignored) { }
     }
 
     public void loadMap(int level) {
@@ -56,8 +54,7 @@ public class TileManager {
                     col++;
                 }
                 if (col == gp.maxScreenCol) {
-                    col = 0;
-                    row++;
+                    col = 0; row++;
                 }
             }
             br.close();
@@ -73,8 +70,7 @@ public class TileManager {
         while (col < gp.maxScreenCol && row < gp.maxScreenRow) {
             int tileNum = mapTileNum[col][row];
             g2.drawImage(tile[tileNum].image, x, y,null);
-            col++;
-            x += gp.tileSize;
+            col++; x += gp.tileSize;
             if (col == gp.maxScreenCol) {
                 col = x = 0;
                 row++;

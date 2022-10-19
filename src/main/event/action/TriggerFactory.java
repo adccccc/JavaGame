@@ -41,7 +41,7 @@ public class TriggerFactory {
      */
     public static class TimerTrigger implements Action.Trigger {
 
-        private Integer surviveTime;
+        private int surviveTime;
 
         private TimerTrigger(String triggerParam) {surviveTime = Integer.parseInt(triggerParam);}
 

@@ -24,9 +24,7 @@ public class GameObjectManager {
     public GameObjectManager(GamePanel gp) {
 
         this.gp = gp;
-        try {
-            loadLibrary(); // 加载物品库
-        } catch (Exception e) {}
+        try { loadLibrary();  } catch (Exception ignored) { } // 加载物品库, debug时打错误日志
     }
 
     /// -------------------------------- 预加载物品库 --------------------------------------------
@@ -45,12 +43,13 @@ public class GameObjectManager {
         setup(8,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.HURT_PLAYER, null,1, "spike_right.png");
         setup(9,  Constant.TILE_SIZE, Constant.TILE_SIZE,  1, null, 16, CollisionEffect.SAVE_POINT, null,1, "save_point.png");
         setup(10,  Constant.TILE_SIZE, Constant.TILE_SIZE,   0, triangleRight, 0, CollisionEffect.NEXT_LEVEL, null,1, "next_level.png");
-        setup(11,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, ActionFactory.getAction(null, "disappear", "600", Action.Trigger.IMMEDIATE), 3, "bullet_fire_1.png", "bullet_fire_2.png");
-        setup(12,  16, 16,  1, null, 8, CollisionEffect.HURT_PLAYER, null,3, "bullet_heart.png");
-        setup(13,  32, 32,  1, null, 8, CollisionEffect.HURT_PLAYER, null, 15, "basketball_0.png","basketball_1.png");
+        setup(11,  16, 16,  1, null, 7, CollisionEffect.HURT_PLAYER, null, 3, "bullet_fire_1.png", "bullet_fire_2.png");
+        setup(12,  16, 16,  1, null, 7, CollisionEffect.HURT_PLAYER, ActionFactory.getAction(null, "disappear", "800", Action.Trigger.IMMEDIATE),3, "bullet_heart.png");
+        setup(13,  32, 32,  1, null, 10, CollisionEffect.HURT_PLAYER, null, 15, "basketball_0.png","basketball_1.png");
         setup(14,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, null, 1, "wall_stone.png"); // 掩体
         setup(15,  Constant.TILE_SIZE, Constant.TILE_SIZE, 0, null, 0, CollisionEffect.NOTHING, null,1, "wall_stone.png"); // 掩体
-        setup(16,  20, 20,  1, null, 10, CollisionEffect.HURT_PLAYER, null,3, "bullet_blue_0.png","bullet_blue_1.png");
+        setup(16,  20, 20,  1, null, 7, CollisionEffect.HURT_PLAYER, null,3, "bullet_blue_0.png","bullet_blue_1.png");
+        setup(17,  32, 32,  1, null, 7, CollisionEffect.HURT_PLAYER, ActionFactory.getAction(null, "disappear", "500", Action.Trigger.IMMEDIATE),5, "bullet_smile_0.png","bullet_smile_1.png","bullet_smile_2.png"); // 随机子弹
 
         // BOSS展示对象
         setup(98, 180,180,0,null,0, CollisionEffect.HURT_PLAYER, null, 6, "boss_00.png","boss_01.png","boss_02.png","boss_03.png","boss_04.png","boss_05.png","boss_06.png","boss_07.png","boss_08.png","boss_09.png","boss_10.png","boss_11.png","boss_12.png");
@@ -112,8 +111,7 @@ public class GameObjectManager {
                 objectList.add(gameObject);
             }
 
-            col = 0;
-            row++;
+            col = 0; row++;
         }
         br.close();
     }
@@ -124,9 +122,8 @@ public class GameObjectManager {
      */
     public void loadGameObjectFromTextConfig(int level) throws IOException {
 
-        InputStream in = getClass().getResourceAsStream("/objects/tpl" + level + ".conf");
-        if (in == null) // 找不到文件
-            return;
+        InputStream in = getClass().getResourceAsStream("/objects/tpl" + level + ".txt");
+        if (in == null) return; // 找不到文件
 
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         Map<String, String> propMap = new HashMap<>();
@@ -134,8 +131,7 @@ public class GameObjectManager {
         // 每关配置文件的第一行为重生坐标
         String line = br.readLine();
         // 坐标没有初始化时加载，否则继续使用存档点坐标
-        if (gp.playerInitPos.x == 0 && gp.playerInitPos.y == 0)
-            gp.playerInitPos = new CcVector(line);
+        if (gp.playerInitPos.x == 0 && gp.playerInitPos.y == 0) gp.playerInitPos = new CcVector(line);
 
         // 加载游戏物体配置
         while ((line = br.readLine()) != null) {
@@ -161,19 +157,16 @@ public class GameObjectManager {
             GameObject gameObject = objectLibrary[Integer.parseInt(propMap.get("index"))].clone();
             if (propMap.containsKey("speed")) gameObject.speed = new CcVector(propMap.get("speed"));
             if (propMap.containsKey("pos")) gameObject.pos = new CcVector(pos);
-            if (propMap.containsKey("box")) gameObject.pos = new CcVector(propMap.get("box"));
+            if (propMap.containsKey("box")) gameObject.box = new CcVector(propMap.get("box"));
             if (propMap.containsKey("scale")) gameObject.scale = Double.parseDouble(propMap.get("scale"));
-            if (propMap.containsKey("rotate")) gameObject.rotate = Integer.parseInt(propMap.get("rotate"));
+            // if (propMap.containsKey("rotate")) gameObject.rotate = Integer.parseInt(propMap.get("rotate"));
             if (propMap.containsKey("visible")) gameObject.visible = Boolean.parseBoolean(propMap.get("visible"));
-            if (propMap.containsKey("shape")) gameObject.shape = Integer.parseInt(propMap.get("shape"));
+            // if (propMap.containsKey("shape")) gameObject.shape = Integer.parseInt(propMap.get("shape"));
             // 从配置中加载碰撞体积
-            if (propMap.containsKey("collisionPoly"))
-                gameObject.collisionPoly = new CcPolygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
-            if (propMap.containsKey("collisionRadius"))
-                gameObject.collisionRadius = Double.parseDouble(propMap.get("collisionRadius"));
+            // if (propMap.containsKey("collisionPoly")) gameObject.collisionPoly = new CcPolygon(Arrays.stream(propMap.get("collisionPoly").split(",")).map(Double::parseDouble).collect(Collectors.toList()));
+            // if (propMap.containsKey("collisionRadius")) gameObject.collisionRadius = Double.parseDouble(propMap.get("collisionRadius"));
             // 从配置中加载动作和触发器，因为文本配置不好管理，故限制只能有一个动作
-            if (propMap.containsKey("actionName"))
-                gameObject.actionList.add(ActionFactory.getAction(gameObject, propMap.get("actionName"), propMap.get("actionParam"), TriggerFactory.getTrigger(gameObject, propMap.get("triggerName"), propMap.get("triggerParam"))));
+            if (propMap.containsKey("actionName")) gameObject.actionList.add(ActionFactory.getAction(gameObject, propMap.get("actionName"), propMap.get("actionParam"), TriggerFactory.getTrigger(gameObject, propMap.get("triggerName"), propMap.get("triggerParam"))));
 
             list.add(gameObject);
         }
@@ -186,10 +179,8 @@ public class GameObjectManager {
 
         gp.player.onPlatform = false; // 重置角色的平台状态
         for (GameObject obj : objectList) {
-            if (gp.endLoopFlag) { // 当前关卡结束，不再更新
-                gp.endLoopFlag = false;
-                break;
-            }
+            if (gp.endLoopFlag) { gp.endLoopFlag = false; break; }  // 当前关卡结束，不再更新
+
             obj.checkAndExecuteAction(); // 执行物体动作
             CollisionChecker.checkGameObject(gp.player, obj); // 检查角色和物体间的碰撞
             obj.reCalcLocation(); // 重新计算物体位置
